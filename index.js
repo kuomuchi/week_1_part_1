@@ -2,7 +2,7 @@ const express = require('express');
 const { send } = require('process');
 const app = express();
 
-app.listen(3000, ()=>{
+app.listen(80, ()=>{
   console.log('80 ready');
 });
 
