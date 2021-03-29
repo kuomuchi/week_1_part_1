@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const { send } = require('process');
 const path = require('path');
@@ -41,10 +43,10 @@ app.get('/', (req, res) =>{
 
 //connect db
 const db = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '123456',
-  database : 'stylish'
+  host     : process.env.DB_HOST,
+  user     : process.env.DB_USER,
+  password : process.env.DB_PWD,
+  database : process.env.DB_database
 });
 
 //connect db is err
