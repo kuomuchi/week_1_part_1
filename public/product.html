@@ -1,0 +1,35 @@
+<html>
+  <title>
+    <h1>Hello world</h1>
+  </title>
+
+  <body>
+    <form action="/admin/product.html" method="post" enctype="multipart/form-data">
+      <p>title<br><input type="text" name="title"><br></p>
+      <p>description<br><input type="text" name="description"><br></p>
+      <p>price<br><input type="text" name="price"><br></p>
+      <p>texture<br><input type="text" name="texture"><br></p>
+      <p>wash<br><input type="text" name="wash"><br></p>
+      <p>place<br><input type="text" name="place"><br></p>
+      <p>note<br><input type="text" name="note"><br></p>
+      <p>story<br><input type="text" name="story"><br></p>
+      <p>pick a political party!... I mean color !</p>
+        <select name="pthging">
+          <option value="blue">blue</option>
+          <option value="green">green</option>
+          <option value="red">red</option>
+        </select>
+        <p>sizes</p>
+        <select name="sizes">
+          <option value="M">M</option>
+          <option value="S">S</option>
+          <option value="L">L</option>
+        </select>
+      
+      <p>upload main image 第一張為main，其餘3張為images</p>
+      <input type="file" name="main_image" multiple="multiple">
+      <br><br>
+      <button>summit</button>  
+    </form>
+  </body>
+</html>
