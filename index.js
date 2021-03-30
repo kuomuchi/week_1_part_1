@@ -263,7 +263,7 @@ app.get('/api/1.0/products/:id', (req, res) =>{
     res.send('no data <3, you fizz');
   }
 
-  if(paging == undefined){
+  if(paging == undefined || paging == ""){
     res.redirect(`/api/1.0/products/${req.params.id}?paging`);
   }
 
