@@ -263,7 +263,7 @@ app.get('/api/1.0/products/:id', (req, res) =>{
   if(req.params.id != 'men' && req.params.id != 'women' && req.params.id != 'accessories' && req.params.id != 'all'){
     res.send('no data <3, you fizz');
   }
-  console.log(paging);
+  fix = paging;
 
   if(paging == undefined){
     fix = 0;
