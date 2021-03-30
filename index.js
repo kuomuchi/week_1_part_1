@@ -10,6 +10,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const uuid = require('uuid').v4;
 const { get } = require('http');
+const { ADDRGETNETWORKPARAMS } = require('dns');
+const { rejects } = require('assert');
 
 
 
@@ -59,7 +61,7 @@ db.connect((err) => {
 
 
 app.get('/adduser1', (req, res)=>{
-  let post = {title: 'test', description: 'testtest', price: '100', texture: 'sklky', wash: 'very hard', place: 'who know?', note:'this is so hard!', story: 'NO!', colors: '{"red": "#ff0000"}', sizes: '{"size": "M"}'};
+  let post = {title: 'test', description: 'testtest', price: '100', texture: 'sklky', wash: 'very hard', place: 'who know?', note:'this is so hard!', story: 'NO!', colors: '{"red": "#ff0000"}', sizes: '{"size": "M"}', variants: '{"variants": "null"}', main_image: 'image', images: '{"desk1": "image"}', categories: 'accessories'};
   let sql = 'INSERT INTO product SET ?';
   let query = db.query(sql, post, (err, result) =>{
       if(err) throw err;
@@ -102,7 +104,7 @@ app.get('/selectusers', (req, res)=>{
       b = JSON.parse(JSON.stringify(results));
       console.log(b.length);
       console.log(results);
-      res.send('select...');
+      res.json('select...');
       return 
   });
   
@@ -182,8 +184,6 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
     }
   }
 
-  // console.log("this is chld" + chld[0].color_code + " and "+ chld[0].size + " and " + chld[0].stock);
-
 
   //把所有並非obj的資料，放入 FOR
   for(let i=0; i<allpostdata.length; i++){
@@ -220,6 +220,110 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
 
 
 
+function getWebApi(sq, page){
+  return new Promise((resolve, reject)=>{
+    let web;
+    let query = db.query(sq, (err, result) =>{
+      if(err) throw err;
+      web = JSON.parse(JSON.stringify(result));
+      let 我就用中文 = [];
+      let allthing = {};
+
+
+      for(let i=page*6; i< (page*6)+6; i++){
+        if(web[i] == null) break;
+        web[i].categories=undefined;
+        我就用中文.push(web[i]);
+      }
+      allthing.data = 我就用中文
+      if(web[page*6 + 7] == null){
+
+      }else{
+        allthing.next_paging = +page+1;
+      }
+
+      console.log(web.length);
+
+      resolve(allthing);
+  });
+
+  });
+}
+
+
+
+
+
+//create api
+app.get('/api/1.0/products/:id', (req, res) =>{
+  const { paging } = req.query;
+  
+
+  if(req.params.id != 'men' && req.params.id != 'women' && req.params.id != 'accessories' && req.params.id != 'all'){
+    res.send('no data <3, you fizz');
+  }
+
+  if(paging == undefined){
+    res.redirect(`/api/1.0/products/${req.params.id}?paging`);
+  }
+
+
+  let sql = `SELECT * FROM product WHERE categories IS NOT NULL AND categories = '${req.params.id}'`;
+  if(req.params.id == 'all'){
+    sql = `SELECT * FROM product WHERE categories IS NOT NULL`
+  }
+  // let query = db.query(sql, (err, result) =>{
+  //     if(err) throw err;
+
+      // web = JSON.parse(JSON.stringify(result));
+      // console.log(web.length);
+      // let 我就用中文 = [];
+      // for(let i=paging*6; i< (paging*6)+6; i++){
+      //   if(web[i] == null) break;
+      //   web[i].categories=undefined;
+      //   我就用中文.push(web[i]);
+      // }
+
+      getWebApi(sql, paging).then(res.json.bind(res));
+
+      // res.json(我就用中文);
+      
+  // });
+});
+
+
+
+
+//程式來源
+// app.get('/getuser/:id', (req, res) =>{
+//   let sql = `SELECT * FROM user WHERE email = '${req.params.id}'`;
+//   let query = db.query(sql, (err, result) =>{
+//       if(err) throw err;
+//       console.log(result);
+//   });
+  
+// });
+
+// 瘋狂加入東西 men women 之類的！
+// aap.get(ㄅ);
+// 神秘的地方 :D
+
+let dom =  Math.floor(Math.random()*19)+1;
+let pit = Math.floor(Math.random()*500)+1
+let asd = ['asd', 'aasdf'];
+let vra = ['liberty','sausage','lobby', 'right', 'railroad', 'computer', 'pumpkin', 'secretion', 'session', 'obligation', 'net', 'insistence', 'policeman', 'factory', 'leader', 'begin', 'alarm', 'weed', 'ride', 'sculpture'];
+let gbe = ['men', 'women', 'accessories'];
+
+app.get('/a', (req, res)=>{
+  let post = {title: vra[Math.floor(Math.random()*19)+1], description: vra[Math.floor(Math.random()*19)+1], price: pit, texture: vra[Math.floor(Math.random()*19)+1], wash: vra[Math.floor(Math.random()*19)+1], place: vra[Math.floor(Math.random()*19)+1], note:vra[Math.floor(Math.random()*19)+1], story: vra[Math.floor(Math.random()*19)+1], colors: '{"red": "#ff0000"}', sizes: '{"size": "M"}', variants: '{"variants": "null"}', main_image: 'http://3.13.254.132/image/test1.jpg', images: '{"desk1": "http://3.13.254.132/image/test2.jpg"}', categories: gbe[Math.floor(Math.random()*3)] };
+  let sql = 'INSERT INTO product SET ?';
+  let query = db.query(sql, post, (err, result) =>{
+      if(err) throw err;
+      console.log(result);
+  });
+  res.send('add a new  :D');
+});
+
 
 
 //test place
@@ -241,3 +345,37 @@ app.post('/admin/test.html', upload.array('main', 3) ,(req, res) =>{
   }
   
 });
+
+
+
+
+
+// console.log(b.length);
+// res.json(b.length);
+// console.log(b.length);
+
+
+
+// async function jeff(asd){
+//   return await aa(asd);
+// }
+
+
+// function aa(asd){
+//   return new Promise((resolve, reject)=>{
+//     let query = db.query(asd, (err, results) =>{
+//       if(err) throw err;
+//       b = JSON.parse(JSON.stringify(results));
+//       // console.log(b.length);
+//       resolve(b);
+//     });
+  
+//   });
+
+// }
+
+// app.get('/nisgood', (req, res)=>{
+
+//   let sql = 'SELECT * FROM product';
+//   aa(sql).then(res.json.bind(res));
+// });
