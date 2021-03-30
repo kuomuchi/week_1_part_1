@@ -263,9 +263,10 @@ app.get('/api/1.0/products/:id', (req, res) =>{
   if(req.params.id != 'men' && req.params.id != 'women' && req.params.id != 'accessories' && req.params.id != 'all'){
     res.send('no data <3, you fizz');
   }
+  console.log(paging);
 
-  if(paging == undefined || paging == ""){
-    res.redirect(`/api/1.0/products/${req.params.id}?paging=0`);
+  if(paging == undefined){
+    fix = 0;
   }
 
 
@@ -285,7 +286,7 @@ app.get('/api/1.0/products/:id', (req, res) =>{
       //   我就用中文.push(web[i]);
       // }
 
-      getWebApi(sql, paging).then(res.json.bind(res));
+      getWebApi(sql, fix).then(res.json.bind(res));
 
       // res.json(我就用中文);
       
