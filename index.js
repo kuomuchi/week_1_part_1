@@ -102,8 +102,10 @@ app.get('/selectusers', (req, res)=>{
       b = JSON.parse(JSON.stringify(results));
       console.log(b.length);
       console.log(results);
+      res.send('select...');
+      return 
   });
-  res.send('select....');
+  
 });
 
 
@@ -118,9 +120,72 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
 
   //get all post req, and make a array
   //取得所有的input post結果
-  let allpostdata = [req.body.title, req.body.description, req.body.price, req.body.texture, req.body.wash, req.body.place, req.body.note, req.body.story, req.body.pthging, req.body.sizes];
+  let allpostdata = [req.body.title, req.body.description, req.body.price, req.body.texture, req.body.wash, req.body.place, req.body.note, req.body.story];
+  
+  //所有的衣服尺碼
+  let allsieze = [req.body.sizes, req.body.sizem, req.body.sizel, req.body.sizexl, req.body.sizexxl];
+  //新建立一個array
+  let postsize = [];
+
+  //將所有的被選取的衣服size放入array。
+  for(let i=0; i<allsieze.length; i++){
+    let size = ['S', "M", "L", "XL", "XXL"];
+    if(allsieze[i] == 'on'){
+      postsize.push(size[i]);
+    }
+  }
 
 
+
+
+  //抓取所有顏色的數值。
+  let allcolor = [req.body.colorblue, req.body.colorred, req.body.colorgreen];
+  let postcolor = [];
+  let now=0;
+  for(let i=0; i<allcolor.length; i++){
+    let color = ['blue', 'red', 'green'];
+    //all colors table
+    let colornum = ['#0000ff', '#ff0000', '#00ff00'];
+
+    //如果顏色為on
+    if(allcolor[i] == 'on'){
+      //加入一個物件。
+      postcolor.push({});
+      // postcolor.push(`{ "code": "${colornum[i]}" ,"name":"${color[i]}"}`); 這是失敗的方法
+
+      //聰明人
+      postcolor[now].code = colornum[i];
+      postcolor[now].name = color[i];
+      now++;
+    }
+  }
+
+
+
+  //將images輸入array裡面
+  let allimage = [];
+  for(let i=1; i<req.files.length; i++){
+    let thing = `${req.files[i].destination}/${req.files[i].filename}`;
+    allimage.push(thing);
+  }
+
+
+  let chld = [];
+  let chldnow = 0;
+  for(let i=0; i<postcolor.length; i++){
+    for(let u=0; u<postsize.length; u++){
+      chld.push({});
+      chld[chldnow].color_code = postcolor[i].code;
+      chld[chldnow].size = postsize[u];
+      chld[chldnow].stock =  Math.floor(Math.random()*100)+1;
+      chldnow++;
+    }
+  }
+
+  // console.log("this is chld" + chld[0].color_code + " and "+ chld[0].size + " and " + chld[0].stock);
+
+
+  //把所有並非obj的資料，放入 FOR
   for(let i=0; i<allpostdata.length; i++){
     //when find any input is null
     //then return get fail
@@ -131,31 +196,16 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
     }
   }
 
-  //all colors table
-  let colornum = ['#000ff', '#00ff00', '#ff0000'];
-  //witch color user select
-  let selectcolor = 0;
-
-  if(allpostdata[8] == 'red'){
-    selectcolor = 0;
-  }else if(allpostdata[8] == 'green'){
-    selectcolor = 1;
-  }else{
-    selectcolor = 2;
+  if(!req.files[0]){
+    console.log('NO images YOU BAD BAD!!');
+    res.sendFile(__dirname + '/public/errorPage.html');
+    return
   }
 
-  
-
-
-  
 
   //if input != null
   //create a new thing
-
-  let a = req.files[1].destination
-
-
-  let post = {title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `{ "${allpostdata[8]}": "${colornum[selectcolor]}"}`, sizes: `{"size": "${allpostdata[9]}"}`, main_image: req.files[0].destination+"/"+req.files[0].filename, images: `{"dest1": "${req.files[1].destination}/${req.files[1].filename}", "dest2": "${req.files[1].destination}/${req.files[1].filename}", "dest3": "${req.files[1].destination}/${req.files[1].filename}"}`};
+  let post = {title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `${JSON.stringify(postcolor)}`, sizes: `{"size": "${postsize}"}` , variants: `{ "variants" : ${JSON.stringify(chld)}}` , main_image: req.files[0].destination+"/"+req.files[0].filename, images: `{"image" : "${allimage}"}`};
     let sql = 'INSERT INTO product SET ?';
     let query = db.query(sql, post, (err, result) =>{
         if(err) throw err;
