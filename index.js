@@ -254,6 +254,7 @@ function getWebApi(sq, page){
 
 
 
+
 //create api
 app.get('/api/1.0/products/:id', (req, res) =>{
   const { paging } = req.query;
@@ -264,7 +265,7 @@ app.get('/api/1.0/products/:id', (req, res) =>{
   }
 
   if(paging == undefined || paging == ""){
-    res.redirect(`/api/1.0/products/${req.params.id}?paging`);
+    res.redirect(`/api/1.0/products/${req.params.id}?paging=0`);
   }
 
 
