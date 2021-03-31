@@ -106,7 +106,7 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
 
   //get all post req, and make a array
   //取得所有的input post結果
-  let allpostdata = [req.body.title, req.body.description, req.body.price, req.body.texture, req.body.wash, req.body.place, req.body.note, req.body.story];
+  let allpostdata = [req.body.title, req.body.description, req.body.price, req.body.texture, req.body.wash, req.body.place, req.body.note, req.body.story, req.body.selec];
   
   //所有的衣服尺碼
   let allsieze = [req.body.sizes, req.body.sizem, req.body.sizel, req.body.sizexl, req.body.sizexxl];
@@ -191,7 +191,7 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
   //if input != null
   //create a new thing
   
-  let post = {title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `${JSON.stringify(postcolor)}`, sizes: `${JSON.stringify(postsize)}` , variants: `${JSON.stringify(chld)}` , main_image: local+req.files[0].destination+"/"+req.files[0].filename, images: `${JSON.stringify(allimage)}`};
+  let post = {title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `${JSON.stringify(postcolor)}`, sizes: `${JSON.stringify(postsize)}` , variants: `${JSON.stringify(chld)}` , main_image: local+req.files[0].destination+"/"+req.files[0].filename, images: `${JSON.stringify(allimage)}`, categories: req.body.selec};
     let sql = 'INSERT INTO product SET ?';
     let query = db.query(sql, post, (err, result) =>{
         if(err) throw err;
@@ -232,7 +232,6 @@ function getWebApi(sq, page){
       //將所有資料裡的 string 轉換為 obj
       for(let i=0; i< 6; i++){
         if(web[i] == null) break;
-        web[i].categories = undefined;
         web[i].colors = JSON.parse(web[i].colors);
         web[i].sizes = JSON.parse(web[i].sizes);
         web[i].variants = JSON.parse(web[i].variants);
@@ -243,6 +242,7 @@ function getWebApi(sq, page){
       if(web[6] == null){
         nextg = 0;
       }
+    
       if(web.length == 7){
         web.pop();
       }
