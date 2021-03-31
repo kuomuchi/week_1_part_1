@@ -315,9 +315,12 @@ let pit = Math.floor(Math.random()*500)+1
 let asd = ['asd', 'aasdf'];
 let vra = ['liberty','sausage','lobby', 'right', 'railroad', 'computer', 'pumpkin', 'secretion', 'session', 'obligation', 'net', 'insistence', 'policeman', 'factory', 'leader', 'begin', 'alarm', 'weed', 'ride', 'sculpture'];
 let gbe = ['men', 'women', 'accessories'];
+let newcolor = [{"code":"#ff0000", "name":"red"}];
+let newvariants = [{"color_code": "334455", "size":"S", "stock":"1231"}];
+
 
 app.get('/a', (req, res)=>{
-  let post = {title: vra[Math.floor(Math.random()*19)+1], description: vra[Math.floor(Math.random()*19)+1], price: pit, texture: vra[Math.floor(Math.random()*19)+1], wash: vra[Math.floor(Math.random()*19)+1], place: vra[Math.floor(Math.random()*19)+1], note:vra[Math.floor(Math.random()*19)+1], story: vra[Math.floor(Math.random()*19)+1], colors: '{"red": "#ff0000"}', sizes: '{"size": "M"}', variants: '{"variants": "null"}', main_image: 'http://3.13.254.132/image/test1.jpg', images: '{"desk1": "http://3.13.254.132/image/test2.jpg"}', categories: gbe[Math.floor(Math.random()*3)] };
+  let post = {title: vra[Math.floor(Math.random()*19)+1], description: vra[Math.floor(Math.random()*19)+1], price: pit, texture: vra[Math.floor(Math.random()*19)+1], wash: vra[Math.floor(Math.random()*19)+1], place: vra[Math.floor(Math.random()*19)+1], note:vra[Math.floor(Math.random()*19)+1], story: vra[Math.floor(Math.random()*19)+1], colors: JSON.stringify(newcolor), sizes: '{"size":["M", "S", "L"]}', variants: JSON.stringify(newvariants), main_image: 'http://3.13.254.132/image/test1.jpg', images: '{"desk1": "http://3.13.254.132/image/test2.jpg"}', categories: gbe[Math.floor(Math.random()*3)] };
   let sql = 'INSERT INTO product SET ?';
   let query = db.query(sql, post, (err, result) =>{
       if(err) throw err;
