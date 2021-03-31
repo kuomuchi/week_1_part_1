@@ -38,7 +38,7 @@ app.use('/admin', express.static('public'));
 app.get('/', (req, res) =>{
   // res.sendFile(__dirname + '/public/welcome.html');
   console.log("Ko No Dio Da!!!");
-  res.send('welcome');
+  res.json(JSON.parse(['{"x":"2", "y":"3"}']));
 
 });
 
@@ -226,23 +226,32 @@ function getWebApi(sq, page){
     let query = db.query(sq, (err, result) =>{
       if(err) throw err;
       web = JSON.parse(JSON.stringify(result));
+
+      console.log(web);
+
       let 我就用中文 = [];
       let allthing = {};
 
 
       for(let i=page*6; i< (page*6)+6; i++){
         if(web[i] == null) break;
-        web[i].categories=undefined;
-        我就用中文.push(web[i]);
+        web[i].categories = undefined;
+        web[i].colors = JSON.parse(web[i].colors);
+        web[i].sizes = JSON.parse(web[i].sizes);
+        web[i].variants = JSON.parse(web[i].variants);
+        web[i].images = JSON.parse(web[i].images);
+        
+        我就用中文.push((web[i]));
       }
       allthing.data = 我就用中文
       if(web[page*6 + 7] == null){
 
       }else{
+        // allthing.data[0].colors = JSON.parse(allthing.data[0].colors);
         allthing.next_paging = +page+1;
       }
 
-      console.log(web.length);
+      // console.log(typeof(allthing.data[0].colors));
 
       resolve(allthing);
   });
