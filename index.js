@@ -221,6 +221,7 @@ function getWebApi(sq, page){
   return new Promise((resolve, reject)=>{
     let web;
     let query = db.query(sq, (err, result) =>{
+
       if(err) throw err;
       web = JSON.parse(JSON.stringify(result));
 
@@ -230,7 +231,7 @@ function getWebApi(sq, page){
       let allthing = {};
 
       //將所有資料裡的 string 轉換為 obj
-      for(let i=0; i< 6; i++){
+      for(let i=0; i< web.length; i++){
         if(web[i] == null) break;
         web[i].colors = JSON.parse(web[i].colors);
         web[i].sizes = JSON.parse(web[i].sizes);
@@ -249,7 +250,12 @@ function getWebApi(sq, page){
 
       //因作業需求，新增了一個名為Data的key
       //其Value為 MySQl抓下來的所有資料。
-      allthing.data = web;
+      
+      if(web.length == 1){
+        allthing.data = web[0];
+      }else{
+        allthing.data = web;
+      }
       if(nextg == 0){
       }else{
         allthing.next_paging = +page+1;
@@ -271,6 +277,7 @@ function getWebApi(sq, page){
 app.get('/api/1.0/products/:id', (req, res) =>{
   const { keyword } = req.query;
   const {paging} = req.query
+  const { id } = req.query
   let fix = 0;
   let wordkey = keyword;
 
@@ -282,8 +289,13 @@ app.get('/api/1.0/products/:id', (req, res) =>{
   if(keyword == undefined){
     wordkey = "";
   }
-
   let sql = `SELECT * FROM product WHERE title LIKE '%${wordkey}%' LIMIT ${fix*6},7`;
+
+  if(req.params.id == 'details'){
+    sql = `SELECT * FROM product WHERE id = ${id}`;
+  }
+
+  
   getWebApi(sql, fix).then(res.json.bind(res));
 
 });
