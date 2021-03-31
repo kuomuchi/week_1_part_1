@@ -268,11 +268,12 @@ function getWebApi(sq, page){
 
 
 //create api
-app.get('/api/1.0/products/search', (req, res) =>{
+app.get('/api/1.0/products/:id', (req, res) =>{
   const { keyword } = req.query;
   const {paging} = req.query
   let fix = 0;
   let wordkey = keyword;
+
   if(paging == undefined){
     fix = 0;
   }else{
