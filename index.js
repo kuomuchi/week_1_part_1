@@ -60,6 +60,8 @@ db.connect((err) => {
 
 
 
+
+//透過api新增資料
 app.get('/adduser1', (req, res)=>{
   let post = {title: 'test', description: 'testtest', price: '100', texture: 'sklky', wash: 'very hard', place: 'who know?', note:'this is so hard!', story: 'NO!', colors: '{"red": "#ff0000"}', sizes: '{"size": "M"}', variants: '{"variants": "null"}', main_image: 'image', images: '{"desk1": "image"}', categories: 'accessories'};
   let sql = 'INSERT INTO product SET ?';
@@ -71,31 +73,7 @@ app.get('/adduser1', (req, res)=>{
 });
 
 
-app.get('/addobj', (req, res)=>{
-  let post = {test: '{"red" : "#ff0000"}'};
-  let sql = 'INSERT INTO salmon SET ?';
-  let query = db.query(sql, post, (err, result) =>{
-      if(err) throw err;
-      console.log(result);
-      
-  });
-  res.send('add some obj!!!');
-});
-
-app.get('/selectsalmon', (req, res)=>{
-  let sql = 'SELECT * FROM salmon';
-  let b = '';
-  let query = db.query(sql, (err, results) =>{
-      if(err) throw err;
-      b = JSON.parse(JSON.stringify(results));
-      console.log(b.length);
-      console.log(results);
-  });
-  res.send('select....');
-});
-
-
-
+//搜尋product這個table 裡面的所有資料
 app.get('/selectusers', (req, res)=>{
   let sql = 'SELECT * FROM product';
   let b = '';
@@ -115,6 +93,11 @@ app.get('/selectusers', (req, res)=>{
 app.listen(3000, () =>{
   console.log('run on 3000');
 });
+
+
+
+
+//////當有人在product.html輸入資料
 
 //in product there, when post! and.....do soemthing!
 //當在「product.html」收到post時。
@@ -153,15 +136,13 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
     if(allcolor[i] == 'on'){
       //加入一個物件。
       postcolor.push({});
-      // postcolor.push(`{ "code": "${colornum[i]}" ,"name":"${color[i]}"}`); 這是失敗的方法
 
-      //聰明人
+      //將資料輸入對應的key 
       postcolor[now].code = colornum[i];
       postcolor[now].name = color[i];
       now++;
     }
   }
-
 
 
   //將images輸入array裡面
@@ -171,9 +152,11 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
     allimage.push(thing);
   }
 
-
+  //建立一個新的變體
   let chld = [];
   let chldnow = 0;
+
+  //自動產生所有的變體
   for(let i=0; i<postcolor.length; i++){
     for(let u=0; u<postsize.length; u++){
       chld.push({});
@@ -196,6 +179,7 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
     }
   }
 
+  //當沒有輸入圖片時，回傳YOU BAD BAD
   if(!req.files[0]){
     console.log('NO images YOU BAD BAD!!');
     res.sendFile(__dirname + '/public/errorPage.html');
@@ -218,6 +202,10 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
 });
 
 
+///////////product.html結束
+
+
+
 
 app.get('/image/:id', (req, res)=>{
   res.sendFile(__dirname + '/image/' + req.params.id);
@@ -226,6 +214,7 @@ app.get('/image/:id', (req, res)=>{
 
 
 
+//抓取MySQL的資料，抓取page的後6比資料
 function getWebApi(sq, page){
   return new Promise((resolve, reject)=>{
     let web;
@@ -238,7 +227,7 @@ function getWebApi(sq, page){
       let nextg = 1;
       let allthing = {};
 
-
+      //將所有資料裡的 string 轉換為 obj
       for(let i=0; i< 6; i++){
         if(web[i] == null) break;
         web[i].categories = undefined;
@@ -248,22 +237,23 @@ function getWebApi(sq, page){
         web[i].images = JSON.parse(web[i].images);
       }
 
+      //如果第7比資料是null，將不會回將paging的物件。
       if(web[6] == null){
         nextg = 0;
       }
       if(web.length == 7){
         web.pop();
       }
-      
+
+      //因作業需求，新增了一個名為Data的key
+      //其Value為 MySQl抓下來的所有資料。
       allthing.data = web;
       if(nextg == 0){
       }else{
-        // allthing.data[0].colors = JSON.parse(allthing.data[0].colors);
         allthing.next_paging = +page+1;
       }
 
-      // console.log(typeof(allthing.data[0].colors));
-
+      //回傳allthing
       resolve(allthing);
   });
 
@@ -276,83 +266,49 @@ function getWebApi(sq, page){
 
 
 //create api
-app.get('/api/1.0/products/:id', (req, res) =>{
-  const { paging } = req.query;
-  
-
-  if(req.params.id != 'men' && req.params.id != 'women' && req.params.id != 'accessories' && req.params.id != 'all'){
-    res.send('no data <3, you fizz');
-  }
-  fix = paging;
-
+app.get('/api/1.0/products/search', (req, res) =>{
+  const { keyword } = req.query;
+  const {paging} = req.query
+  let fix = 0;
   if(paging == undefined){
     fix = 0;
+  }else{
+    fix = paging;
   }
 
+  let sql = `SELECT * FROM product WHERE title LIKE '%${keyword}%' LIMIT ${fix*6},7`;
 
-  // let sql = `SELECT * FROM product WHERE categories IS NOT NULL AND categories = '${req.params.id}'`;
+  getWebApi(sql, fix).then(res.json.bind(res));
 
-  let sql = `SELECT * FROM product WHERE categories = '${req.params.id}' LIMIT ${fix * 6}, 7`;
-
-  if(req.params.id == 'all'){
-    sql = `SELECT * FROM product LIMIT ${fix * 6}, 7`;
-    // sql = `SELECT * FROM product WHERE categories IS NOT NULL`
-  }
-  // let query = db.query(sql, (err, result) =>{
-  //     if(err) throw err;
-
-      // web = JSON.parse(JSON.stringify(result));
-      // console.log(web.length);
-      // let rep = [];
-      // for(let i=paging*6; i< (paging*6)+6; i++){
-      //   if(web[i] == null) break;
-      //   web[i].categories=undefined;
-      //   rep.push(web[i]);
-      // }
-
-      getWebApi(sql, fix).then(res.json.bind(res));
-
-      // res.json(rep);
-      
-  // });
 });
 
 
 
 
-//程式來源
-// app.get('/getuser/:id', (req, res) =>{
-//   let sql = `SELECT * FROM user WHERE email = '${req.params.id}'`;
-//   let query = db.query(sql, (err, result) =>{
+
+
+
+// // aap.get(ㄅ);
+// // 神秘的地方 :D 專業新增無用の資料。
+
+// let dom =  Math.floor(Math.random()*19)+1;
+// let pit = Math.floor(Math.random()*500)+1
+// let asd = ['asd', 'aasdf'];
+// let vra = ['liberty','sausage','lobby', 'right', 'railroad', 'computer', 'pumpkin', 'secretion', 'session', 'obligation', 'net', 'insistence', 'policeman', 'factory', 'leader', 'begin', 'alarm', 'weed', 'ride', 'sculpture'];
+// let gbe = ['men', 'women', 'accessories'];
+// let newcolor = [{"code":"#ff0000", "name":"red"}];
+// let newvariants = [{"color_code": "334455", "size":"S", "stock":"1231"}];
+
+
+// app.get('/a', (req, res)=>{
+//   let post = {title: vra[Math.floor(Math.random()*19)+1], description: vra[Math.floor(Math.random()*19)+1], price: pit, texture: vra[Math.floor(Math.random()*19)+1], wash: vra[Math.floor(Math.random()*19)+1], place: vra[Math.floor(Math.random()*19)+1], note:vra[Math.floor(Math.random()*19)+1], story: vra[Math.floor(Math.random()*19)+1], colors: JSON.stringify(newcolor), sizes: '{"size":["M", "S", "L"]}', variants: JSON.stringify(newvariants), main_image: 'http://3.13.254.132/image/test1.jpg', images: '{"desk1": "http://3.13.254.132/image/test2.jpg"}', categories: gbe[Math.floor(Math.random()*3)] };
+//   let sql = 'INSERT INTO product SET ?';
+//   let query = db.query(sql, post, (err, result) =>{
 //       if(err) throw err;
 //       console.log(result);
 //   });
-  
+//   res.send('add a new  :D');
 // });
-
-// 瘋狂加入東西 men women 之類的！
-// aap.get(ㄅ);
-// 神秘的地方 :D
-
-let dom =  Math.floor(Math.random()*19)+1;
-let pit = Math.floor(Math.random()*500)+1
-let asd = ['asd', 'aasdf'];
-let vra = ['liberty','sausage','lobby', 'right', 'railroad', 'computer', 'pumpkin', 'secretion', 'session', 'obligation', 'net', 'insistence', 'policeman', 'factory', 'leader', 'begin', 'alarm', 'weed', 'ride', 'sculpture'];
-let gbe = ['men', 'women', 'accessories'];
-let newcolor = [{"code":"#ff0000", "name":"red"}];
-let newvariants = [{"color_code": "334455", "size":"S", "stock":"1231"}];
-
-
-app.get('/a', (req, res)=>{
-  let post = {title: vra[Math.floor(Math.random()*19)+1], description: vra[Math.floor(Math.random()*19)+1], price: pit, texture: vra[Math.floor(Math.random()*19)+1], wash: vra[Math.floor(Math.random()*19)+1], place: vra[Math.floor(Math.random()*19)+1], note:vra[Math.floor(Math.random()*19)+1], story: vra[Math.floor(Math.random()*19)+1], colors: JSON.stringify(newcolor), sizes: '{"size":["M", "S", "L"]}', variants: JSON.stringify(newvariants), main_image: 'http://3.13.254.132/image/test1.jpg', images: '{"desk1": "http://3.13.254.132/image/test2.jpg"}', categories: gbe[Math.floor(Math.random()*3)] };
-  let sql = 'INSERT INTO product SET ?';
-  let query = db.query(sql, post, (err, result) =>{
-      if(err) throw err;
-      console.log(result);
-  });
-  res.send('add a new  :D');
-});
-
 
 
 
@@ -375,7 +331,6 @@ app.post('/admin/test.html', upload.array('main', 3) ,(req, res) =>{
   }
   
 });
-
 
 
 
@@ -409,3 +364,32 @@ app.post('/admin/test.html', upload.array('main', 3) ,(req, res) =>{
 //   let sql = 'SELECT * FROM product';
 //   aa(sql).then(res.json.bind(res));
 // });
+
+
+
+
+
+//測試用的鮭魚
+app.get('/addobj', (req, res)=>{
+  let post = {test: '{"red" : "#ff0000"}'};
+  let sql = 'INSERT INTO salmon SET ?';
+  let query = db.query(sql, post, (err, result) =>{
+      if(err) throw err;
+      console.log(result);
+      
+  });
+  res.send('add some obj!!!');
+});
+
+//查看鮭魚的狀況
+app.get('/selectsalmon', (req, res)=>{
+  let sql = 'SELECT * FROM salmon';
+  let b = '';
+  let query = db.query(sql, (err, results) =>{
+      if(err) throw err;
+      b = JSON.parse(JSON.stringify(results));
+      console.log(b.length);
+      console.log(results);
+  });
+  res.send('select....');
+});
