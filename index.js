@@ -191,7 +191,7 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
   //if input != null
   //create a new thing
   
-  let post = {title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `${JSON.stringify(postcolor)}`, sizes: `{"size": "${postsize}"}` , variants: `{ "variants" : ${JSON.stringify(chld)}}` , main_image: local+req.files[0].destination+"/"+req.files[0].filename, images: `{"image" : "${allimage}"}`};
+  let post = {title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `${JSON.stringify(postcolor)}`, sizes: `${JSON.stringify(postsize)}` , variants: `${JSON.stringify(chld)}` , main_image: local+req.files[0].destination+"/"+req.files[0].filename, images: `${JSON.stringify(allimage)}`};
     let sql = 'INSERT INTO product SET ?';
     let query = db.query(sql, post, (err, result) =>{
         if(err) throw err;
