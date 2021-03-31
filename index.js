@@ -102,6 +102,7 @@ app.listen(3000, () =>{
 //in product there, when post! and.....do soemthing!
 //當在「product.html」收到post時。
 app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
+  let local = "http://3.13.254.132/"
 
   //get all post req, and make a array
   //取得所有的input post結果
@@ -148,7 +149,7 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
   //將images輸入array裡面
   let allimage = [];
   for(let i=1; i<req.files.length; i++){
-    let thing = `${req.files[i].destination}/${req.files[i].filename}`;
+    let thing = `${local+req.files[i].destination}/${req.files[i].filename}`;
     allimage.push(thing);
   }
 
@@ -189,7 +190,8 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
 
   //if input != null
   //create a new thing
-  let post = {title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `${JSON.stringify(postcolor)}`, sizes: `{"size": "${postsize}"}` , variants: `{ "variants" : ${JSON.stringify(chld)}}` , main_image: req.files[0].destination+"/"+req.files[0].filename, images: `{"image" : "${allimage}"}`};
+  
+  let post = {title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `${JSON.stringify(postcolor)}`, sizes: `{"size": "${postsize}"}` , variants: `{ "variants" : ${JSON.stringify(chld)}}` , main_image: local+req.files[0].destination+"/"+req.files[0].filename, images: `{"image" : "${allimage}"}`};
     let sql = 'INSERT INTO product SET ?';
     let query = db.query(sql, post, (err, result) =>{
         if(err) throw err;
