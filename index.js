@@ -102,8 +102,8 @@ app.get('/selectusers', (req, res)=>{
   let query = db.query(sql, (err, results) =>{
       if(err) throw err;
       b = JSON.parse(JSON.stringify(results));
-      console.log(b.length);
       console.log(results);
+      console.log(b.length);
       res.json('select...');
       return 
   });
@@ -219,6 +219,12 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
 
 
 
+app.get('/image/:id', (req, res)=>{
+  res.sendFile(__dirname + '/image/' + req.params.id);
+});
+
+
+
 
 function getWebApi(sq, page){
   return new Promise((resolve, reject)=>{
@@ -229,7 +235,7 @@ function getWebApi(sq, page){
 
       console.log(web);
 
-      let 我就用中文 = [];
+      let rep = [];
       let allthing = {};
 
 
@@ -240,12 +246,9 @@ function getWebApi(sq, page){
         web[i].sizes = JSON.parse(web[i].sizes);
         web[i].variants = JSON.parse(web[i].variants);
         web[i].images = JSON.parse(web[i].images);
-        
-        我就用中文.push((web[i]));
       }
-      allthing.data = 我就用中文
-      if(web[page*6 + 7] == null){
-
+      allthing.data = web;
+      if(web[page*6 + 6] == null){
       }else{
         // allthing.data[0].colors = JSON.parse(allthing.data[0].colors);
         allthing.next_paging = +page+1;
@@ -279,25 +282,29 @@ app.get('/api/1.0/products/:id', (req, res) =>{
   }
 
 
-  let sql = `SELECT * FROM product WHERE categories IS NOT NULL AND categories = '${req.params.id}'`;
+  // let sql = `SELECT * FROM product WHERE categories IS NOT NULL AND categories = '${req.params.id}'`;
+
+  let sql = `SELECT * FROM product WHERE categories = '${req.params.id}' LIMIT ${fix * 6}, 7`;
+
   if(req.params.id == 'all'){
-    sql = `SELECT * FROM product WHERE categories IS NOT NULL`
+    sql = `SELECT * FROM product LIMIT ${fix * 6}, 7`;
+    // sql = `SELECT * FROM product WHERE categories IS NOT NULL`
   }
   // let query = db.query(sql, (err, result) =>{
   //     if(err) throw err;
 
       // web = JSON.parse(JSON.stringify(result));
       // console.log(web.length);
-      // let 我就用中文 = [];
+      // let rep = [];
       // for(let i=paging*6; i< (paging*6)+6; i++){
       //   if(web[i] == null) break;
       //   web[i].categories=undefined;
-      //   我就用中文.push(web[i]);
+      //   rep.push(web[i]);
       // }
 
       getWebApi(sql, fix).then(res.json.bind(res));
 
-      // res.json(我就用中文);
+      // res.json(rep);
       
   // });
 });
@@ -337,6 +344,7 @@ app.get('/a', (req, res)=>{
   });
   res.send('add a new  :D');
 });
+
 
 
 
