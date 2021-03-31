@@ -235,11 +235,11 @@ function getWebApi(sq, page){
 
       console.log(web);
 
-      let rep = [];
+      let nextg = 1;
       let allthing = {};
 
 
-      for(let i=page*6; i< (page*6)+6; i++){
+      for(let i=0; i< 6; i++){
         if(web[i] == null) break;
         web[i].categories = undefined;
         web[i].colors = JSON.parse(web[i].colors);
@@ -247,8 +247,16 @@ function getWebApi(sq, page){
         web[i].variants = JSON.parse(web[i].variants);
         web[i].images = JSON.parse(web[i].images);
       }
+
+      if(web[6] == null){
+        nextg = 0;
+      }
+      if(web.length == 7){
+        web.pop();
+      }
+      
       allthing.data = web;
-      if(web[page*6 + 6] == null){
+      if(nextg == 0){
       }else{
         // allthing.data[0].colors = JSON.parse(allthing.data[0].colors);
         allthing.next_paging = +page+1;
