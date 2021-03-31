@@ -272,14 +272,17 @@ app.get('/api/1.0/products/search', (req, res) =>{
   const { keyword } = req.query;
   const {paging} = req.query
   let fix = 0;
+  let wordkey = keyword;
   if(paging == undefined){
     fix = 0;
   }else{
     fix = paging;
   }
+  if(keyword == undefined){
+    wordkey = "";
+  }
 
-  let sql = `SELECT * FROM product WHERE title LIKE '%${keyword}%' LIMIT ${fix*6},7`;
-
+  let sql = `SELECT * FROM product WHERE title LIKE '%${wordkey}%' LIMIT ${fix*6},7`;
   getWebApi(sql, fix).then(res.json.bind(res));
 
 });
