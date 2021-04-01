@@ -1,0 +1,49 @@
+<html>
+  <!-- <link href="css/signin.css" rel="stylesheet"> -->
+  <link href="/admin/css/signin.css" rel="stylesheet">
+  <title>還敢登入啊！ㄅ！</title>
+  <body>
+    <div class="signin-box">
+      <h2>Login you tree not fish!!</h2>
+      <p>UserName</p>
+      <input type="text" name="username" id="username">
+      <p>Email</p>
+      <input type="text" name="email" id="email">
+      <p>Password</p>
+      <input type="text" name="password" id="password">
+      <br><br>
+      <button onclick="sendAjax()">login</button>
+    </div>
+
+    <div class="signup-box">
+      <div>
+        <a href="/user/signup" id="signup-text">don't have account? <br>signip!</a>
+      </div>
+    </div>
+  </body>
+  <script>
+    
+    function sendAjax(){
+
+      const test = {
+        "username": document.getElementById('username').value,
+        "email": document.getElementById('username').value,
+        "password": document.getElementById('username').value
+      }
+
+      let userData = JSON.stringify(test); //問題4你!
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', "http://localhost:3000/user/signin");
+      xhr.setRequestHeader('Content-type', 'application/json');
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4 && xhr.status == 200){
+          var str = xhr.responseText;
+          str = JSON.parse(str);
+          window.localStorage.setItem('access_token', str['data']['access_token']); 
+        }
+      }
+      xhr.send(userData);
+  }
+  </script>
+</html>

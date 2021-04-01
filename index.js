@@ -3,15 +3,26 @@ require('dotenv').config();
 const express = require('express');
 const { send } = require('process');
 const path = require('path');
-
 const multer = require("multer");
-const mysql = require('mysql');
+const mysql = require('mysql'); //mysql
 const app = express();
-const bodyParser = require('body-parser');
-const uuid = require('uuid').v4;
+const bodyParser = require('body-parser'); //處理post出來的body，讓req.body可以跑出資料。
+const uuid = require('uuid').v4; //處理image的東東
 const { get } = require('http');
-const { ADDRGETNETWORKPARAMS } = require('dns');
-const { rejects } = require('assert');
+
+const jwt = require('jsonwebtoken');
+
+const {
+  createHash,
+} = require('crypto'); //跟密碼有關
+const { json } = require('body-parser');
+const { resolveCname } = require('dns');
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+
+
 
 
 
@@ -270,9 +281,6 @@ function getWebApi(sq, page){
 
 
 
-
-
-
 //create api
 app.get('/api/1.0/products/:id', (req, res) =>{
   const { keyword } = req.query;
@@ -302,31 +310,178 @@ app.get('/api/1.0/products/:id', (req, res) =>{
 
 
 
+////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
+
+
+//獲取加密的password
+async function addpass(password){
+  const hash = createHash('sha256');  //創建一個新的hash，使用sha256
+  hash.update(password);
+  return password = await hash.digest('hex');
+
+}
+
+//判斷email的部分。
+function selectuser(sql){
+  return new Promise((resolve, reject) =>{
+    let query = db.query(sql, (err, result) =>{
+      if(err) throw err;
+      let jg = true;
+
+      if(result == ""){
+        jg = false;
+      }
+      resolve(jg);
+    });
+  });
+  
+}
+
+
+//判斷登入
+function getin(sql, un, pss){
+  return new Promise((resolve, reject)=>{
+    let query = db.query(sql, (err, result) =>{
+      if(err) throw err;
+      return resolve(result);
+    });
+  });
+}
+
+
+//登入以及登出
+
+app.get('/user/signin', (req, res)=>{
+  res.sendFile(__dirname + '/public/homepage.html');
+});
+
+app.get('/user/signup', (req, res)=>{
+  res.sendFile(__dirname + '/public/signup.html');
+});
+
+
+//登入
+app.post('/user/signin', (req, res)=>{
+
+  if(req.body.password == ""){
+    res.send("密碼還敢填空啊！冰鳥！")
+    return
+  }
+
+  //將密碼加密
+  addpass(req.body.password).then((data)=>{
+
+    let newdata = data;
+
+    let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND username = '${req.body.username}' AND password = '${newdata}'`;
+    //搜尋email
+    selectuser(sql).then((email)=>{
+      if(email == false){
+        res.send("email或是username 或是 密碼 錯誤");
+      }else{
+        const token = jwt.sign({username: req.body.username, email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+
+        req.header.authorization = 'Bearer ' + token; //將jwt存入header
+        // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
+
+        let alldata = {data:{}};
+        alldata.data.access_token = token;
+        alldata.data.access_expired = 3600;
+        alldata.data.user = {};
+        alldata.data.user.id = Math.floor(Math.random()*11245642)+10000000;
+        alldata.data.user.provider = "Nano";
+        alldata.data.user.email = req.body.email
+        alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
+
+        req.body.provider = req.body.username;
+        req.body.email = req.body.email;
+        req.body.password = newdata;
+
+        const decoded = jwt.verify(token, process.env.JWT_key); //獲取jwt的數值
+        console.log(token+"\n"+decoded);
+        res.status(200).send(alldata);
+      }
+    });
+
+  });
+
+});
 
 
 
 
-// // aap.get(ㄅ);
-// // 神秘的地方 :D 專業新增無用の資料。
-
-// let dom =  Math.floor(Math.random()*19)+1;
-// let pit = Math.floor(Math.random()*500)+1
-// let asd = ['asd', 'aasdf'];
-// let vra = ['liberty','sausage','lobby', 'right', 'railroad', 'computer', 'pumpkin', 'secretion', 'session', 'obligation', 'net', 'insistence', 'policeman', 'factory', 'leader', 'begin', 'alarm', 'weed', 'ride', 'sculpture'];
-// let gbe = ['men', 'women', 'accessories'];
-// let newcolor = [{"code":"#ff0000", "name":"red"}];
-// let newvariants = [{"color_code": "334455", "size":"S", "stock":"1231"}];
 
 
-// app.get('/a', (req, res)=>{
-//   let post = {title: vra[Math.floor(Math.random()*19)+1], description: vra[Math.floor(Math.random()*19)+1], price: pit, texture: vra[Math.floor(Math.random()*19)+1], wash: vra[Math.floor(Math.random()*19)+1], place: vra[Math.floor(Math.random()*19)+1], note:vra[Math.floor(Math.random()*19)+1], story: vra[Math.floor(Math.random()*19)+1], colors: JSON.stringify(newcolor), sizes: '{"size":["M", "S", "L"]}', variants: JSON.stringify(newvariants), main_image: 'http://3.13.254.132/image/test1.jpg', images: '{"desk1": "http://3.13.254.132/image/test2.jpg"}', categories: gbe[Math.floor(Math.random()*3)] };
-//   let sql = 'INSERT INTO product SET ?';
-//   let query = db.query(sql, post, (err, result) =>{
-//       if(err) throw err;
-//       console.log(result);
-//   });
-//   res.send('add a new  :D');
-// });
+
+app.post('/user/signup', (req, res) =>{
+
+  
+
+  //抓取input的值。
+  let user = [req.body.username, req.body.email, req.body.password];
+  console.log(req.body);
+  console.log("test");
+  let sql = `SELECT * FROM account WHERE email = '${user[1]}'`;
+
+  //判斷email是否重複
+  selectuser(sql).then((email)=>{
+
+    //沒有重複的話，直接註冊7小時。
+    if(email == false){
+      console.log("test3"+ email);
+
+      addpass(user[2]).then((data)=>{
+
+
+        console.log("test3" + data);
+
+        let newdata = data;
+        let post = {username: user[0], email: user[1], password: newdata};
+        let sql = 'INSERT INTO account SET ?';
+        let query = db.query(sql, post, (err, result) =>{
+          if(err) throw err;
+
+          const token = jwt.sign(post, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+          req.header.authorization = 'Bearer ' + token; //將jwt存入 header
+          // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
+          
+
+          let alldata = {data:{}};
+          alldata.data.access_token = token;
+          alldata.data.access_expired = 3600;
+          alldata.data.user = {};
+          alldata.data.user.provider = "Nano";
+          alldata.data.user.name = user[0];
+          alldata.data.user.email = user[1];
+          alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
+
+          req.body.id = Math.floor(Math.random()*11245642)+10000000;
+          req.body.name = user[0];
+          req.body.email = user[1];
+          req.body.password = newdata;
+
+          res.send(alldata);
+          
+
+        });
+      });
+    }else{
+      res.send('還敢註冊啊！冰鳥！！有E東西重複了喔 :D');
+    }
+
+    
+  });
+});
+
+app.get('/user/profile', (req, res)=>{
+  let gettoken = req.headers['authorization'];
+  const decoded = jwt.verify(gettoken, process.env.JWT_key);
+  res.send(decoded);
+});
+
+
+
+
 
 
 
@@ -410,4 +565,8 @@ app.get('/selectsalmon', (req, res)=>{
       console.log(results);
   });
   res.send('select....');
+});
+
+
+app.get('/token', (req,res)=>{
 });
