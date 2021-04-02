@@ -351,17 +351,17 @@ function getin(sql, un, pss){
 
 //登入以及登出
 
-app.get('/user/signin', (req, res)=>{
+app.get('/api/1.0/user/signin', (req, res)=>{
   res.sendFile(__dirname + '/public/homepage.html');
 });
 
-app.get('/user/signup', (req, res)=>{
+app.get('/api/1.0/user/signup', (req, res)=>{
   res.sendFile(__dirname + '/public/signup.html');
 });
 
 
 //登入
-app.post('/user/signin', (req, res)=>{
+app.post('/api/1.0/user/signin', (req, res)=>{
 
   if(req.body.password == ""){
     res.send("密碼還敢填空啊！冰鳥！")
@@ -413,7 +413,7 @@ app.post('/user/signin', (req, res)=>{
 
 
 
-app.post('/user/signup', (req, res) =>{
+app.post('/api/1.0/user/signup', (req, res) =>{
 
   
 
@@ -473,7 +473,7 @@ app.post('/user/signup', (req, res) =>{
   });
 });
 
-app.get('/user/profile', (req, res)=>{
+app.get('/api/1.0/user/profile', (req, res)=>{
   let gettoken = req.headers['authorization'];
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
   res.send(decoded);

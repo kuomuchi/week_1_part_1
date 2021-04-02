@@ -17,7 +17,7 @@
 
     <div class="signup-box">
       <div>
-        <a href="/user/signup" id="signup-text">don't have account? <br>signip!</a>
+        <a href="/api/1.0/user/signup" id="signup-text">don't have account? <br>signip!</a>
       </div>
     </div>
   </body>
@@ -34,7 +34,7 @@
       let userData = JSON.stringify(test); //問題4你!
 
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', "http://localhost:3000/user/signin");
+      xhr.open('POST', "http://localhost:3000/api/1.0/user/signin");
       xhr.setRequestHeader('Content-type', 'application/json');
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4 && xhr.status == 200){
