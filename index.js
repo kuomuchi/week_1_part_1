@@ -398,10 +398,11 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         req.body.provider = req.body.username;
         req.body.email = req.body.email;
         req.body.password = newdata;
-        console.log("signin"+alldata);
+        
 
         const decoded = jwt.verify(token, process.env.JWT_key); //獲取jwt的數值
         // console.log(token+"\n"+decoded);
+        console.log(alldata);
         res.status(200).send(alldata);
       }
     });
@@ -462,7 +463,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           req.body.name = user[0];
           req.body.email = user[1];
           req.body.password = newdata;
-          console.log("signup"+alldata);
+          console.log(alldata);
 
           res.send(alldata);
           
