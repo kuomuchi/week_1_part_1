@@ -482,6 +482,9 @@ app.get('/api/1.0/user/profile', (req, res)=>{
   let gettoken = req.headers['authorization'];
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
   const printout = {"data":decoded};
+  printout.data.provider = "facebook";
+  printout.data.name = "pei";
+  printout.data.picture = "https://schoolvoyage.ga/images/123498.png";
   console.log("profile"+decoded);
   res.send(printout);
 });
