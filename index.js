@@ -398,7 +398,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         req.body.provider = req.body.username;
         req.body.email = req.body.email;
         req.body.password = newdata;
-        console.log(alldata);
+        console.log("signin"+alldata);
 
         const decoded = jwt.verify(token, process.env.JWT_key); //獲取jwt的數值
         // console.log(token+"\n"+decoded);
@@ -462,7 +462,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           req.body.name = user[0];
           req.body.email = user[1];
           req.body.password = newdata;
-          console.log(alldata);
+          console.log("signup"+alldata);
 
           res.send(alldata);
           
@@ -481,7 +481,7 @@ app.get('/api/1.0/user/profile', (req, res)=>{
   let gettoken = req.headers['authorization'];
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
   const printout = {"data":decoded};
-  console.log(decoded);
+  console.log("profile"+decoded);
   res.send(decoded);
 });
 
