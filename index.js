@@ -390,15 +390,17 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         alldata.data.user = {};
         alldata.data.user.id = Math.floor(Math.random()*11245642)+10000000;
         alldata.data.user.provider = "Nano";
+        alldata.data.user.user = req.body.username;
         alldata.data.user.email = req.body.email
         alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
         req.body.provider = req.body.username;
         req.body.email = req.body.email;
         req.body.password = newdata;
+        console.log(alldata);
 
         const decoded = jwt.verify(token, process.env.JWT_key); //獲取jwt的數值
-        console.log(token+"\n"+decoded);
+        // console.log(token+"\n"+decoded);
         res.status(200).send(alldata);
       }
     });
@@ -459,6 +461,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           req.body.name = user[0];
           req.body.email = user[1];
           req.body.password = newdata;
+          console.log(alldata);
 
           res.send(alldata);
           
