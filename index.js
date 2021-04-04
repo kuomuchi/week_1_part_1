@@ -390,7 +390,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         alldata.data.user = {};
         alldata.data.user.id = Math.floor(Math.random()*11245642)+10000000;
         alldata.data.user.provider = "Nano";
-        alldata.data.user.user = req.body.username;
+        alldata.data.user.name = req.body.username;
         alldata.data.user.email = req.body.email
         alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
