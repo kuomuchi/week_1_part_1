@@ -391,7 +391,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         alldata.data.user = {};
         alldata.data.user.id = Math.floor(Math.random()*11245642)+10000000;
         alldata.data.user.provider = "Nano";
-        alldata.data.user.name = req.body.username;
+        alldata.data.user.name = "Nano";
         alldata.data.user.email = req.body.email
         alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
@@ -454,7 +454,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           alldata.data.access_expired = 3600;
           alldata.data.user = {};
           alldata.data.user.provider = "Nano";
-          alldata.data.user.name = user[0];
+          alldata.data.user.name = "Nano";
           alldata.data.user.email = user[1];
           alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
