@@ -482,7 +482,7 @@ app.get('/api/1.0/user/profile', (req, res)=>{
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
   const printout = {"data":decoded};
   console.log("profile"+decoded);
-  res.send(decoded);
+  res.send(printout);
 });
 
 
