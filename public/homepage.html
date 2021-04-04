@@ -27,8 +27,8 @@
 
       const test = {
         "username": document.getElementById('username').value,
-        "email": document.getElementById('username').value,
-        "password": document.getElementById('username').value
+        "email": document.getElementById('email').value,
+        "password": document.getElementById('password').value
       }
 
       let userData = JSON.stringify(test); //問題4你!
@@ -39,8 +39,8 @@
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4 && xhr.status == 200){
           var str = xhr.responseText;
-          str = JSON.parse(str);
-          window.localStorage.setItem('access_token', str['data']['access_token']); 
+          var pa = JSON.parse(str);
+          window.localStorage.setItem('access_token', pa['data']['access_token']); 
         }
       }
       xhr.send(userData);

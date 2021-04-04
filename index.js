@@ -364,6 +364,7 @@ app.get('/api/1.0/user/signup', (req, res)=>{
 app.post('/api/1.0/user/signin', (req, res)=>{
 
   if(req.body.password == ""){
+    console.log("password error");
     res.send("密碼還敢填空啊！冰鳥！")
     return
   }
