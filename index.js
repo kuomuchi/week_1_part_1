@@ -327,17 +327,20 @@ function selectuser(sql){
     let query = db.query(sql, (err, result) =>{
       if(err) throw err;
 
-      console.log(result);
-
-      let jg = true;
-
-      if(result == ""){
-        jg = false;
+      let jg = false;
+      let b = result;
+      
+      if(result != ""){
+       jg = true;
       }
-      resolve(jg);
+      // b[1] = jg
+
+      // b = JSON.parse(JSON.stringify(result));
+      
+
+      resolve(b);
     });
-  });
-  
+  });  
 }
 
 
@@ -382,11 +385,17 @@ app.post('/api/1.0/user/signin', (req, res)=>{
     let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND password = '${newdata}'`;
     console.log(sql);
     //搜尋email
+
     selectuser(sql).then((email)=>{
+      console.log("this is");
       console.log(email);
-      if(email == false){
+
+      if(email == ''){
         res.send("email 或是 密碼 錯誤");
       }else{
+
+        let b = JSON.parse(JSON.stringify(email));
+
         console.log("成功進入！")
         const token = jwt.sign({username: 'nano', email: req.body.email, password: newdata}, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
 
@@ -397,10 +406,10 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         alldata.data.access_token = token;
         alldata.data.access_expired = 3600;
         alldata.data.user = {};
-        alldata.data.user.id = 11245642;
+        alldata.data.user.id = b[0].id;
         alldata.data.user.provider = "Nano";
-        alldata.data.user.name = "Nano";
-        alldata.data.user.email = req.body.email;
+        alldata.data.user.name = b[0].username;
+        alldata.data.user.email = b[0].email;
         alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
         req.body.provider = 'Nano';
@@ -436,10 +445,9 @@ app.post('/api/1.0/user/signup', (req, res) =>{
   selectuser(sql).then((email)=>{
 
     //沒有重複的話，直接註冊7小時。
-    if(email == false){
-      console.log("test3"+ email);
+    if(email == ''){
+
       addpass(user[2]).then((data)=>{
-        console.log("test3" + data);
 
         let newdata = data;
         let post = {username: user[0], email: user[1], password: newdata};
@@ -456,16 +464,17 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           alldata.data.access_token = token;
           alldata.data.access_expired = 3600;
           alldata.data.user = {};
-          alldata.data.user.id = 11245642;
+          alldata.data.user.id = 123;
           alldata.data.user.provider = "Nano";
-          alldata.data.user.name = "Nano";
+          alldata.data.user.name = req.body.email;
           alldata.data.user.email = user[1];
           alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
-          req.body.id = Math.floor(Math.random()*11245642)+10000000;
+          req.body.id = 1234;
           req.body.name = user[0];
           req.body.email = user[1];
           req.body.password = newdata;
+          console.log("this");
           console.log(alldata);
 
           res.send(alldata);
@@ -474,6 +483,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
         });
       });
     }else{
+      console.log('還敢註冊啊！冰鳥！！有E東西重複了喔 :D');
       res.send('還敢註冊啊！冰鳥！！有E東西重複了喔 :D');
     }
 
