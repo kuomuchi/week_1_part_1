@@ -374,13 +374,13 @@ app.post('/api/1.0/user/signin', (req, res)=>{
 
     let newdata = data;
 
-    let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND username = '${req.body.username}' AND password = '${newdata}'`;
+    let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND username = '${req.body.name}' AND password = '${newdata}'`;
     //搜尋email
     selectuser(sql).then((email)=>{
       if(email == false){
         res.send("email或是username 或是 密碼 錯誤");
       }else{
-        const token = jwt.sign({username: req.body.username, email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+        const token = jwt.sign({username: req.body.name, email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
 
         req.header.authorization = 'Bearer ' + token; //將jwt存入header
         // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
@@ -395,7 +395,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         alldata.data.user.email = req.body.email;
         alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
-        req.body.provider = req.body.username;
+        req.body.provider = req.body.name;
         req.body.email = req.body.email;
         req.body.password = newdata;
         
@@ -422,7 +422,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
   
 
   //抓取input的值。
-  let user = [req.body.username, req.body.email, req.body.password];
+  let user = [req.body.name, req.body.email, req.body.password];
   console.log(req.body);
   console.log("test");
   let sql = `SELECT * FROM account WHERE email = '${user[1]}'`;
@@ -483,6 +483,10 @@ app.get('/api/1.0/user/profile', (req, res)=>{
   let gettoken = req.headers['authorization'];
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
   const printout = {data:decoded};
+  printout.data.name = printout.data.username;
+  printout.data.username = undefined;
+  printout.data.iat = undefined;
+  printout.data.exp = undefined;
   printout.data.password = undefined;
   printout.data.provider = "facebook";
   printout.data.name = "pei";

@@ -5,7 +5,7 @@
       <h1>Sign UP!!!!!</h1>
     
       <p>user name</p>
-      <input type="text" id="username">
+      <input type="text" id="name">
       <p>your email</p>
       <input type="text" id="email">
       <p>password</p>
@@ -18,7 +18,7 @@
     function sendAjax(){
 
       const test = {
-        "username": document.getElementById('username').value,
+        "name": document.getElementById('name').value,
         "email": document.getElementById('email').value,
         "password": document.getElementById('password').value
       }
@@ -26,7 +26,7 @@
       
   
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', "http://localhost:3000/api/1.0/user/signup", true);
+      xhr.open('POST', "http://3.13.254.132/api/1.0/user/signup", true);
       xhr.setRequestHeader('Content-type', 'application/json');
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4 && xhr.status == 200){
