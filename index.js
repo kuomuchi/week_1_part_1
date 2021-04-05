@@ -388,7 +388,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         res.send("email 或是 密碼 錯誤");
       }else{
         console.log("成功進入！")
-        const token = jwt.sign({username: 'nano', email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+        const token = jwt.sign({username: 'nano', email: req.body.email, password: newdata}, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
 
         req.header.authorization = 'Bearer ' + token; //將jwt存入header
         // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
@@ -403,7 +403,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         alldata.data.user.email = req.body.email;
         alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
-        req.body.provider = req.body.name;
+        req.body.provider = 'Nano';
         req.body.email = req.body.email;
         req.body.password = newdata;
         // console.log(token+"\n"+decoded);
