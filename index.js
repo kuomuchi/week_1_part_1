@@ -390,7 +390,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         console.log("成功進入！")
         const token = jwt.sign({username: 'nano', email: req.body.email, password: newdata}, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
 
-        req.header.authorization = 'Bearer ' + token; //將jwt存入header
+        req.headers.authorization = 'Bearer ' + token; //將jwt存入header
         // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
 
         let alldata = {data:{}};
