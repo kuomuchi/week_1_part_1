@@ -38,8 +38,9 @@
       xhr.setRequestHeader('Content-type', 'application/json');
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4 && xhr.status == 200){
-          var str = ""
+          var str = "";
           str = xhr.responseText;
+          console.log(str);
           str = JSON.parse(str);
           window.localStorage.setItem('access_token', str['data']['access_token']);
         }

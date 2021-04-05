@@ -360,54 +360,136 @@ app.get('/api/1.0/user/signup', (req, res)=>{
 });
 
 
-
 //登入
 app.post('/api/1.0/user/signin', (req, res)=>{
-  const thing = {
-    "data": {
-      "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6joiYXJ0aHVIjoxNjEzNTY3MzA0fQ.6EPCOfBGynidAfpVqlvbHGWHCJ5LZLtKvPaQ",
-      "access_expired": 3600,
-      "user": {
-        "id": 11245642,
-        "provider": "facebook",
-        "name": "Pei",
-        "email": "pei@appworks.tw",
-        "picture": "https://schoolvoyage.ga/images/123498.png"
-      }
-    }
+
+  if(req.body.password == ""){
+    console.log("password error");
+    res.send("密碼還敢填空啊！冰鳥！")
+    return
   }
-  console.log(thing);
-  res.send(thing);
-  
+
+  //將密碼加密
+  addpass(req.body.password).then((data)=>{
+
+    let newdata = data;
+    console.log(newdata);
+
+    let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND username = '${req.body.name}' AND password = '${newdata}'`;
+    //搜尋email
+    selectuser(sql).then((email)=>{
+      if(email == false){
+        res.send("email或是username 或是 密碼 錯誤");
+      }else{
+        const token = jwt.sign({username: req.body.name, email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+
+        req.header.authorization = 'Bearer ' + token; //將jwt存入header
+        // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
+
+        let alldata = {data:{}};
+        alldata.data.access_token = token;
+        alldata.data.access_expired = 3600;
+        alldata.data.user = {};
+        alldata.data.user.id = 11245642;
+        alldata.data.user.provider = "Nano";
+        alldata.data.user.name = "Nano";
+        alldata.data.user.email = req.body.email;
+        alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
+
+        req.body.provider = req.body.name;
+        req.body.email = req.body.email;
+        req.body.password = newdata;
+        
+
+        const decoded = jwt.verify(token, process.env.JWT_key); //獲取jwt的數值
+        // console.log(token+"\n"+decoded);
+        console.log(alldata);
+        res.status(200).send(alldata);
+      }
+    });
+
+  });
+
 });
+
+
+
+
+
 
 
 app.post('/api/1.0/user/signup', (req, res) =>{
-  const thing = {
-    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6joiYXJ0aHVIjoxNjEzNTY3MzA0fQ.6EPCOfBGynidAfpVqlvbHGWHCJ5LZLtKvPaQ",
-    "access_expired": 3600,
-    "user": {
-      "id": 11245642,
-      "provider": "facebook",
-      "name": "Pei",
-      "email": "pei@appworks.tw",
-      "picture": "https://schoolvoyage.ga/images/123498.png"
+
+  
+
+  //抓取input的值。
+  let user = [req.body.name, req.body.email, req.body.password];
+  console.log(req.body);
+  console.log("test");
+  let sql = `SELECT * FROM account WHERE email = '${user[1]}'`;
+
+  //判斷email是否重複
+  selectuser(sql).then((email)=>{
+
+    //沒有重複的話，直接註冊7小時。
+    if(email == false){
+      console.log("test3"+ email);
+
+      addpass(user[2]).then((data)=>{
+
+
+        console.log("test3" + data);
+
+        let newdata = data;
+        let post = {username: user[0], email: user[1], password: newdata};
+        let sql = 'INSERT INTO account SET ?';
+        let query = db.query(sql, post, (err, result) =>{
+          if(err) throw err;
+
+          const token = jwt.sign(post, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+          req.header.authorization = 'Bearer ' + token; //將jwt存入 header
+          // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
+          
+
+          let alldata = {data:{}};
+          alldata.data.access_token = token;
+          alldata.data.access_expired = 3600;
+          alldata.data.user = {};
+          alldata.data.user.id = 11245642;
+          alldata.data.user.provider = "Nano";
+          alldata.data.user.name = "Nano";
+          alldata.data.user.email = user[1];
+          alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
+
+          req.body.id = Math.floor(Math.random()*11245642)+10000000;
+          req.body.name = user[0];
+          req.body.email = user[1];
+          req.body.password = newdata;
+          console.log(alldata);
+
+          res.send(alldata);
+          
+
+        });
+      });
+    }else{
+      res.send('還敢註冊啊！冰鳥！！有E東西重複了喔 :D');
     }
-  }
-  console.log(thing);
-  res.send(thing);
+
+    
+  });
 });
 
 app.get('/api/1.0/user/profile', (req, res)=>{
-  const thing = {
-    "data": {
-      "provider": "facebook",
-      "name": "Pei",
-      "email": "pei@appworks.tw",
-      "picture": "https://schoolvoyage.ga/images/123498.png"
-    }
-  }
-  res.send(thing);
+  let gettoken = req.headers['authorization'];
+  const decoded = jwt.verify(gettoken, process.env.JWT_key);
+  const printout = {"data":decoded};
+  pringout.password = undefined;
+  printout.data.provider = "facebook";
+  printout.data.name = "pei";
+  printout.data.picture = "https://schoolvoyage.ga/images/123498.png";
+  console.log("profile"+decoded);
+  res.send(printout);
 });
 
 
