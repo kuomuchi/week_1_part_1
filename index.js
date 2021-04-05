@@ -362,6 +362,7 @@ app.get('/api/1.0/user/signup', (req, res)=>{
 
 //登入
 app.post('/api/1.0/user/signin', (req, res)=>{
+  console.log('進入signin');
 
   if(req.body.password == ""){
     console.log("password error");
@@ -399,9 +400,6 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         req.body.provider = req.body.name;
         req.body.email = req.body.email;
         req.body.password = newdata;
-        
-
-        const decoded = jwt.verify(token, process.env.JWT_key); //獲取jwt的數值
         // console.log(token+"\n"+decoded);
         console.log(alldata);
         res.status(200).send(alldata);
@@ -410,6 +408,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
 
   });
 
+  console.log('出去signin')
 });
 
 
@@ -420,8 +419,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
 
 app.post('/api/1.0/user/signup', (req, res) =>{
 
-  
-
+  console.log('進入signup');
   //抓取input的值。
   let user = [req.body.name, req.body.email, req.body.password];
   console.log(req.body);
@@ -478,6 +476,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
 
     
   });
+  console.log('出去signup')
 });
 
 app.get('/api/1.0/user/profile', (req, res)=>{
