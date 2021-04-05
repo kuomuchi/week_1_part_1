@@ -382,7 +382,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
       }else{
         const token = jwt.sign({username: req.body.name, email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
 
-        req.header.Authorization = 'Bearer ' + token; //將jwt存入header
+        req.header.authorization = 'Bearer ' + token; //將jwt存入header
         // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
 
         let alldata = {data:{}};
