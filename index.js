@@ -401,8 +401,15 @@ app.post('/api/1.0/user/signup', (req, res) =>{
 });
 
 app.get('/api/1.0/user/profile', (req, res)=>{
-  const thing = 
-  res.send
+  const thing = {
+    "data": {
+      "provider": "facebook",
+      "name": "Pei",
+      "email": "pei@appworks.tw",
+      "picture": "https://schoolvoyage.ga/images/123498.png"
+    }
+  }
+  res.send(thing);
 });
 
 
