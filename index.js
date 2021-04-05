@@ -378,17 +378,17 @@ app.post('/api/1.0/user/signin', (req, res)=>{
 
     let newdata = data;
 
-    console.log(req.body.email+" 以及 "+req.body.name + " 以及 "+newdata);
-    let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND username = '${req.body.name}' AND password = '${newdata}'`;
+    console.log(req.body.email+" 以及 " +newdata);
+    let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND password = '${newdata}'`;
     console.log(sql);
     //搜尋email
     selectuser(sql).then((email)=>{
       console.log(email);
       if(email == false){
-        res.send("email或是username 或是 密碼 錯誤");
+        res.send("email 或是 密碼 錯誤");
       }else{
         console.log("成功進入！")
-        const token = jwt.sign({username: req.body.name, email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+        const token = jwt.sign({username: 'nano', email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
 
         req.header.authorization = 'Bearer ' + token; //將jwt存入header
         // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
