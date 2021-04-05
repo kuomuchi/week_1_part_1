@@ -326,6 +326,9 @@ function selectuser(sql){
   return new Promise((resolve, reject) =>{
     let query = db.query(sql, (err, result) =>{
       if(err) throw err;
+
+      console.log(result);
+
       let jg = true;
 
       if(result == ""){
@@ -375,6 +378,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
 
     let newdata = data;
 
+    console.log(req.body.email+" 以及 "+req.body.name + " 以及 "+newdata);
     let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND username = '${req.body.name}' AND password = '${newdata}'`;
     console.log(sql);
     //搜尋email
@@ -434,10 +438,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
     //沒有重複的話，直接註冊7小時。
     if(email == false){
       console.log("test3"+ email);
-
       addpass(user[2]).then((data)=>{
-
-
         console.log("test3" + data);
 
         let newdata = data;
