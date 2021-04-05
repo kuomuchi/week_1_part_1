@@ -403,7 +403,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         const decoded = jwt.verify(token, process.env.JWT_key); //獲取jwt的數值
         // console.log(token+"\n"+decoded);
         console.log(alldata);
-        res.send(alldata);
+        res.status(200).send(alldata);
       }
     });
 
@@ -464,7 +464,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           req.body.password = newdata;
           console.log(alldata);
 
-          res.send(alldata);
+          res.status(200).send(alldata);
           
 
         });
