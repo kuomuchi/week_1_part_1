@@ -448,7 +448,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           if(err) throw err;
 
           const token = jwt.sign(post, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
-          req.header.authorization = 'Bearer ' + token; //將jwt存入 header
+          req.headers.authorization = 'Bearer ' + token; //將jwt存入 header
           // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
           
 
@@ -483,7 +483,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
 });
 
 app.get('/api/1.0/user/profile', (req, res)=>{
-  let gettoken = req.headers['authorization'];
+  let gettoken = req.headers.authorization.split(' ')[1];
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
   const printout = {"data":decoded};
   pringout.password = undefined;
