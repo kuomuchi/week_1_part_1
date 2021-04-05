@@ -437,6 +437,8 @@ app.post('/api/1.0/user/signup', (req, res) =>{
       addpass(user[2]).then((data)=>{
 
 
+        console.log("test3" + data);
+
         let newdata = data;
         let post = {username: user[0], email: user[1], password: newdata};
         let sql = 'INSERT INTO account SET ?';
@@ -444,7 +446,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           if(err) throw err;
 
           const token = jwt.sign(post, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
-          req.header.Authorization = 'Bearer ' + token; //將jwt存入 header
+          req.header.authorization = 'Bearer ' + token; //將jwt存入 header
           // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
           
 
@@ -464,7 +466,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           req.body.password = newdata;
           console.log(alldata);
 
-          res.status(200).send(alldata);
+          res.send(alldata);
           
 
         });

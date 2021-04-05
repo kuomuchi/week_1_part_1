@@ -1,7 +1,7 @@
 <html>
   <!-- <link href="css/signin.css" rel="stylesheet"> -->
-  <link href="/admin/css/signin.css" rel="stylesheet">
-  <title>還敢登入啊！ㄅ！</title>
+  <!-- <link href="/admin/css/signin.css" rel="stylesheet"> -->
+  <title>login</title>
   <body>
     <div class="signin-box">
       <h2>Login you tree not fish!!</h2>
@@ -34,11 +34,12 @@
       let userData = JSON.stringify(test); //問題4你!
 
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', "http://3.13.254.132/api/1.0/user/signin");
+      xhr.open('POST', "http://3.13.254.132/api/1.0/user/signin", true);
       xhr.setRequestHeader('Content-type', 'application/json');
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4 && xhr.status == 200){
-          var str = xhr.responseText;
+          var str = ""
+          str = xhr.responseText;
           str = JSON.parse(str);
           window.localStorage.setItem('access_token', str['data']['access_token']);
         }
