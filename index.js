@@ -384,16 +384,14 @@ app.post('/api/1.0/user/signin', (req, res)=>{
 
 app.post('/api/1.0/user/signup', (req, res) =>{
   const thing = {
-    "data": {
-      "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6joiYXJ0aHVIjoxNjEzNTY3MzA0fQ.6EPCOfBGynidAfpVqlvbHGWHCJ5LZLtKvPaQ",
-      "access_expired": 3600,
-      "user": {
-        "id": 11245642,
-        "provider": "facebook",
-        "name": "Pei",
-        "email": "pei@appworks.tw",
-        "picture": "https://schoolvoyage.ga/images/123498.png"
-      }
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6joiYXJ0aHVIjoxNjEzNTY3MzA0fQ.6EPCOfBGynidAfpVqlvbHGWHCJ5LZLtKvPaQ",
+    "access_expired": 3600,
+    "user": {
+      "id": 11245642,
+      "provider": "facebook",
+      "name": "Pei",
+      "email": "pei@appworks.tw",
+      "picture": "https://schoolvoyage.ga/images/123498.png"
     }
   }
   console.log(thing);
