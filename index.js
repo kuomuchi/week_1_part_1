@@ -382,7 +382,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
       }else{
         const token = jwt.sign({username: req.body.name, email: req.body.email, password: newdata},process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
 
-        req.header.authorization = 'Bearer ' + token; //將jwt存入header
+        req.header.Authorization = 'Bearer ' + token; //將jwt存入header
         // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
 
         let alldata = {data:{}};
@@ -403,7 +403,7 @@ app.post('/api/1.0/user/signin', (req, res)=>{
         const decoded = jwt.verify(token, process.env.JWT_key); //獲取jwt的數值
         // console.log(token+"\n"+decoded);
         console.log(alldata);
-        res.status(200).send(alldata);
+        res.send(alldata);
       }
     });
 
@@ -437,8 +437,6 @@ app.post('/api/1.0/user/signup', (req, res) =>{
       addpass(user[2]).then((data)=>{
 
 
-        console.log("test3" + data);
-
         let newdata = data;
         let post = {username: user[0], email: user[1], password: newdata};
         let sql = 'INSERT INTO account SET ?';
@@ -446,7 +444,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
           if(err) throw err;
 
           const token = jwt.sign(post, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
-          req.header.authorization = 'Bearer ' + token; //將jwt存入 header
+          req.header.Authorization = 'Bearer ' + token; //將jwt存入 header
           // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
           
 
@@ -480,7 +478,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
 });
 
 app.get('/api/1.0/user/profile', (req, res)=>{
-  let gettoken = req.headers['authorization'];
+  let gettoken = req.headers['Authorization'];
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
   const printout = {data:decoded};
   printout.data.name = printout.data.username;
