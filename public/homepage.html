@@ -39,7 +39,6 @@
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4 && xhr.status == 200){
           var str = xhr.responseText;
-          str = JSON.stringify(str);
           str = JSON.parse(str);
           window.localStorage.setItem('access_token', str['data']['access_token']);
         }
