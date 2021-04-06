@@ -119,7 +119,7 @@ app.get('/admin/campaign.html' ,(req, res) => {
 app.post('/admin/campaign.html',upload.single('main'), (req, res) =>{
   let local = "http://3.13.254.132/"
   
-  let post = {product_id: req.body.product_id , story: req.body.story, picture: local + req.file.destination +"/"+req.files.filename};
+  let post = {product_id: req.body.product_id , story: req.body.story, picture: local + req.file.destination +"/"+req.file.filename};
   let sql = 'INSERT INTO week_1_part_5 SET ?';
   let query = db.query(sql, post, (err, result) =>{
       if(err) throw err;
