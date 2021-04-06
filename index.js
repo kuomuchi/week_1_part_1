@@ -110,6 +110,42 @@ app.listen(3000, () =>{
 });
 
 
+//week_1_part_5
+
+app.get('/admin/campaign.html' ,(req, res) => {
+  res.sendFile(__dirname + '/public/campaign.html');
+});
+
+app.post('/admin/campaign.html',upload.single('main'), (req, res) =>{
+  let local = "http://3.13.254.132/"
+  
+  let post = {product_id: req.body.product_id , story: req.body.story, picture: local + req.file.destination};
+  let sql = 'INSERT INTO week_1_part_5 SET ?';
+  let query = db.query(sql, post, (err, result) =>{
+      if(err) throw err;
+      console.log(result);
+      res.send("nice")
+  });
+  
+});
+
+
+app.get('/api/1.0/marketing/campaigns', (req,res)=>{
+  let sql = 'SELECT * FROM week_1_part_5';
+  let b = '';
+  let query = db.query(sql, (err, results) =>{
+      if(err) throw err;
+      b = JSON.parse(JSON.stringify(results));
+      console.log(results);
+      console.log(b.length);
+      res.json(b);
+      return 
+  });
+  
+});
+
+
+
 
 
 //////當有人在product.html輸入資料
@@ -219,7 +255,9 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) =>{
 });
 
 
-///////////product.html結束
+///////////product.html結束///////////product.html結束///////////product.html結束///////////product.html結束///////////product.html結束
+///////////product.html結束///////////product.html結束///////////product.html結束///////////product.html結束///////////product.html結束
+///////////product.html結束///////////product.html結束///////////product.html結束///////////product.html結束///////////product.html結束
 
 
 
@@ -314,6 +352,9 @@ app.get('/api/1.0/products/:id', (req, res) =>{
 
 
 
+////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
+////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
+////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
 ////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
 
 
