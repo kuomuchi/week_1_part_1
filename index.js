@@ -119,7 +119,7 @@ app.get('/admin/campaign.html' ,(req, res) => {
 app.post('/admin/campaign.html',upload.single('main'), (req, res) =>{
   let local = "http://3.13.254.132/"
   
-  let post = {product_id: req.body.product_id , story: req.body.story, picture: local + req.file.destination};
+  let post = {product_id: req.body.product_id , story: req.body.story, picture: local + req.file.destination +"/"+req.files.filename};
   let sql = 'INSERT INTO week_1_part_5 SET ?';
   let query = db.query(sql, post, (err, result) =>{
       if(err) throw err;
@@ -137,8 +137,10 @@ app.get('/api/1.0/marketing/campaigns', (req,res)=>{
       if(err) throw err;
       b = JSON.parse(JSON.stringify(results));
       console.log(results);
-      console.log(b.length);
-      res.json(b);
+      
+      let printf = {data:b};
+
+      res.json(printf);
       return 
   });
   
