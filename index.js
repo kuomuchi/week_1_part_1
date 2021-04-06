@@ -388,9 +388,9 @@ app.get('/api/1.0/user/signup', (req, res)=>{
 //登入
 app.post('/api/1.0/user/signin', async(req, res)=>{
   console.log('進入signin');
-  const {provider, access_token} = req.body;
-  console.log("here is comse");
   console.log(req.body);
+  const {provider, access_token} = req.body;
+  
 
   if(req.body.password == ""){
     console.log("password error");
