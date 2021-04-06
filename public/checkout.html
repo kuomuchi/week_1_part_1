@@ -1,0 +1,71 @@
+<html>
+  <title></title>
+  <body>
+    <p>checkout!!!!</p>
+
+    <div style="width: 480px; margin: 50px auto;">
+      <label>CardView</label>
+  
+      <!-- 這是我們要塞表單的地方 -->
+      <div id="cardview-container"></div>
+  
+      <!-- 這是我們要觸發 GetPrime 方法的地方 -->
+      <button id="submit-button" onclick="onClick()">Get Prime</button>
+    </div>
+
+    <script src="https://js.tappaysdk.com/tpdirect/v5.5.1"></script>
+
+    <script>
+
+      // 設置好等等 GetPrime 所需要的金鑰
+      TPDirect.setupSDK(12348, "app_pa1pQcKoY22IlnSXq5m5WP5jFKzoRG58VEXpT7wU62ud7mMbDOGzCYIlzzLF", "sandbox");
+        
+      // 把 TapPay 內建輸入卡號的表單給植入到 div 中
+      TPDirect.card.setup('#cardview-container')
+        
+      var submitButton = document.querySelector('#submit-button');
+      
+      async function onClick() {
+
+
+        
+
+        var prime;
+        const cardData = {
+          "prime": "",
+          "test" : 1234567
+        }
+        
+
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "http://localhost:3000/admin/checkout.html", true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        var prime;
+        console.log('test');
+
+        // 讓 button click 之後觸發 getPrime 方法
+        await TPDirect.card.getPrime(function (result) {
+
+          if (result.status !== 0) {
+              console.err('getPrime 錯誤');
+              
+              return
+          }
+          prime = result.card.prime
+          alert('getPrime 成功: ' + prime);
+          cardData.prime = prime;
+          console.log(cardData.prime);
+          let printfOut = JSON.stringify(cardData); //問題4你!
+          xhr.send(printfOut);
+        });
+
+        
+        
+      }
+
+
+    </script>
+    
+  </body>
+</html>

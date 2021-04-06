@@ -109,6 +109,31 @@ app.listen(3000, () =>{
   console.log('run on 3000');
 });
 
+app.get('/admin/checkout.html', (req, res)=>{
+  res.sendFile(__dirname + '/public/checkout.html');
+});
+
+app.post('/admin/checkout.html', (req, res) => {
+  const post_data = {
+    "prime": req.body.prime,
+  }
+
+  console.log(post_data);
+
+  axios.post('https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime', post_data, {
+    headers: {
+        'x-api-key': 'partner_6ID1DoDlaPrfHw6HBZsULfTYtDmWs0q0ZZGKMBpp4YICWBxgK97eK3RM'
+    }
+    }).then((response) => {
+        return res.json({
+          result: response.data
+        });
+    });
+
+
+});
+
+
 
 //week_1_part_5
 
