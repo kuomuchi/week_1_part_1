@@ -542,7 +542,7 @@ app.post('/api/1.0/user/signup', (req, res) =>{
 });
 
 app.get('/api/1.0/user/profile', (req, res)=>{
-  let gettoken = req.headers.authorization; //.split(' ')[1];
+  let gettoken = req.headers.authorization.split(' ')[1];
   console.log(gettoken);
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
   const printout = {data:{}};
