@@ -389,6 +389,7 @@ app.get('/api/1.0/user/signup', (req, res)=>{
 app.post('/api/1.0/user/signin', async(req, res)=>{
   console.log('進入signin');
   const {provider, access_token} = req.body;
+  console.log(req.body);
 
   if(req.body.password == ""){
     console.log("password error");
@@ -429,10 +430,7 @@ app.post('/api/1.0/user/signin', async(req, res)=>{
     addpass(req.body.password).then((data)=>{
 
       let newdata = data;
-
-      console.log(req.body.email+" 以及 " +newdata);
       let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND password = '${newdata}'`;
-      console.log(sql);
       //搜尋email
 
       selectuser(sql).then((email)=>{
