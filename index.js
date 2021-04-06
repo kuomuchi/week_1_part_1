@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const express = require('express');
-const { send } = require('process');
+const { send, getMaxListeners } = require('process');
 const path = require('path');
 const multer = require("multer");
 const mysql = require('mysql'); //mysql
@@ -15,8 +15,12 @@ const jwt = require('jsonwebtoken');
 const {
   createHash,
 } = require('crypto'); //跟密碼有關
+
 const { json } = require('body-parser');
 const { resolveCname } = require('dns');
+
+const axios = require('axios'); // 抓取外部的資訊 (for facebook 使用)
+
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -313,6 +317,21 @@ app.get('/api/1.0/products/:id', (req, res) =>{
 ////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
 
 
+//從共筆獲得到的function，可以透過此function GET FaceBook的資料
+async function getFacebookUserData(access_token) {
+  const { data } = await axios({
+    url: 'https://graph.facebook.com/me',
+    method: 'get',
+    params: {
+      fields: ['id', 'email', 'first_name', 'last_name', 'picture'].join(','),
+      access_token: access_token,
+    },
+  });
+  // console.log(data); // { id, email, first_name, last_name , picture}
+  return data;
+};
+
+
 //獲取加密的password
 async function addpass(password){
   const hash = createHash('sha256');  //創建一個新的hash，使用sha256
@@ -367,8 +386,9 @@ app.get('/api/1.0/user/signup', (req, res)=>{
 
 
 //登入
-app.post('/api/1.0/user/signin', (req, res)=>{
+app.post('/api/1.0/user/signin', async(req, res)=>{
   console.log('進入signin');
+  const {provider, access_token} = req.body;
 
   if(req.body.password == ""){
     console.log("password error");
@@ -376,52 +396,83 @@ app.post('/api/1.0/user/signin', (req, res)=>{
     return
   }
 
-  //將密碼加密
-  addpass(req.body.password).then((data)=>{
 
-    let newdata = data;
+  if(provider == "facebook"){
+    
+    let fbdata = await getFacebookUserData(access_token);
+    let printfout = {data:{user:{}}};
 
-    console.log(req.body.email+" 以及 " +newdata);
-    let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND password = '${newdata}'`;
-    console.log(sql);
-    //搜尋email
+    if(fbdata.email == undefined){
+      fbdata.email = 'nano@getMaxListeners.com';
+    }
 
-    selectuser(sql).then((email)=>{
-      console.log("this is");
-      console.log(email);
+    const token = jwt.sign(fbdata, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+    req.headers.authorization = 'Bearer ' + token; //將jwt存入header
 
-      if(email == ''){
-        res.send("email 或是 密碼 錯誤");
-      }else{
+    printfout.data.access_token = token;
+    printfout.data.access_expired = 3600;
+    printfout.data.user.id = fbdata.id;
+    printfout.data.user.provider = provider;
+    printfout.data.user.name = fbdata.last_name + fbdata.first_name;
+    printfout.data.user.email = fbdata.email;
+    printfout.data.user.picture = fbdata.picture.data.url;
 
-        let b = JSON.parse(JSON.stringify(email));
+    req.body.provider = provider;
+    req.body.email = fbdata.email;
+    
+    res.send(printfout);
+    return;
 
-        console.log("成功進入！")
-        const token = jwt.sign({username: 'nano', email: req.body.email, password: newdata}, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+  }else{
 
-        req.headers.authorization = 'Bearer ' + token; //將jwt存入header
-        // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
+    //將密碼加密
+    addpass(req.body.password).then((data)=>{
 
-        let alldata = {data:{}};
-        alldata.data.access_token = token;
-        alldata.data.access_expired = 3600;
-        alldata.data.user = {};
-        alldata.data.user.id = b[0].id;
-        alldata.data.user.provider = "Nano";
-        alldata.data.user.name = b[0].username;
-        alldata.data.user.email = b[0].email;
-        alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
+      let newdata = data;
 
-        req.body.provider = 'Nano';
-        req.body.email = req.body.email;
-        req.body.password = newdata;
-        // console.log(token+"\n"+decoded);
-        console.log(alldata);
-        res.status(200).send(alldata);
-      }
+      console.log(req.body.email+" 以及 " +newdata);
+      let sql = `SELECT * FROM account WHERE email = '${req.body.email}' AND password = '${newdata}'`;
+      console.log(sql);
+      //搜尋email
+
+      selectuser(sql).then((email)=>{
+        console.log("this is");
+        console.log(email);
+
+        if(email == ''){
+          res.send("email 或是 密碼 錯誤");
+        }else{
+
+          let b = JSON.parse(JSON.stringify(email));
+
+          console.log("成功進入！")
+          const token = jwt.sign({username: 'nano', email: req.body.email, password: newdata}, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
+
+          req.headers.authorization = 'Bearer ' + token; //將jwt存入header
+
+          // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
+
+          let alldata = {data:{}};
+          alldata.data.access_token = token;
+          alldata.data.access_expired = 3600;
+          alldata.data.user = {};
+          alldata.data.user.id = b[0].id;
+          alldata.data.user.provider = "Nano";
+          alldata.data.user.name = b[0].username;
+          alldata.data.user.email = b[0].email;
+          alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
+
+          req.body.provider = 'Nano';
+          req.body.email = req.body.email;
+          req.body.password = newdata;
+          // console.log(token+"\n"+decoded);
+          console.log(alldata);
+          res.status(200).send(alldata);
+        }
+      });
+
     });
-
-  });
+  }
 
   console.log('出去signin')
 });
@@ -493,14 +544,26 @@ app.post('/api/1.0/user/signup', (req, res) =>{
 });
 
 app.get('/api/1.0/user/profile', (req, res)=>{
-  let gettoken = req.headers.authorization.split(' ')[1];
+  let gettoken = req.headers.authorization; //.split(' ')[1];
+  console.log(gettoken);
   const decoded = jwt.verify(gettoken, process.env.JWT_key);
-  const printout = {"data":decoded};
-  printout.password = undefined;
-  printout.data.provider = "facebook";
-  printout.data.name = "pei";
-  printout.data.picture = "https://schoolvoyage.ga/images/123498.png";
-  console.log("profile"+decoded);
+  const printout = {data:{}};
+
+  if(decoded.password == undefined){
+    printout.data.provider = "facebook";
+    printout.data.name = decoded.last_name + decoded.first_name;
+    printout.data.email = decoded.email;
+    printout.data.picture = decoded.picture.data.url;
+
+  }else{
+    printout.data.provider = "native";
+    printout.data.name = decoded.username;
+    printout.data.email = decoded.email;
+    printout.data.picture = "https://schoolvoyage.ga/images/123498.png";
+  }
+
+  
+
   res.send(printout);
 });
 
