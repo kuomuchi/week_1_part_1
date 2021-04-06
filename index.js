@@ -20,6 +20,9 @@ const { json } = require('body-parser');
 const { resolveCname } = require('dns');
 
 const axios = require('axios'); // 抓取外部的資訊 (for facebook 使用)
+const TapPay = require('tappay-nodejs')
+
+// You just need to initilize the config once.
 
 
 app.use(express.json());
@@ -91,12 +94,12 @@ app.get('/adduser1', (req, res)=>{
 //搜尋product這個table 裡面的所有資料
 app.get('/selectusers', (req, res)=>{
   let sql = 'SELECT * FROM product';
-  let b = '';
+  let transResult = '';
   let query = db.query(sql, (err, results) =>{
       if(err) throw err;
-      b = JSON.parse(JSON.stringify(results));
+      transResult = JSON.parse(JSON.stringify(results));
       console.log(results);
-      console.log(b.length);
+      console.log(transResult.length);
       res.json('select...');
       return 
   });
@@ -109,6 +112,8 @@ app.listen(3000, () =>{
   console.log('run on 3000');
 });
 
+
+//week_2_part_1
 app.get('/admin/checkout.html', (req, res)=>{
   res.sendFile(__dirname + '/public/checkout.html');
 });
@@ -119,17 +124,84 @@ app.post('/admin/checkout.html', (req, res) => {
   }
 
   console.log(post_data);
+  req.body.prime = post_data;
+  res.send(req.body.prime);
+});
 
-  axios.post('https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime', post_data, {
-    headers: {
-        'x-api-key': 'partner_6ID1DoDlaPrfHw6HBZsULfTYtDmWs0q0ZZGKMBpp4YICWBxgK97eK3RM'
+app.post('/order/checkout', (req, res) => {
+  console.log(req.headers);
+  console.log(req.body);
+});
+
+TapPay.initialize({
+  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
+  env: 'sandbox'
+});
+
+
+app.post('/order/checkout', async (req, res)=>{
+  
+  let userData = [];
+  
+  userData[0] = req.body.prime;
+  userData[1] = req.body.order;
+  userData[2] = req.body.list;
+  userData[3] = false;
+
+  if(userData[0] == undefined){
+    userData[0] = 'naaaaa';
+  }
+
+  for(let i=1; i<3; i++){
+    if(userData[i] == undefined ){
+      userData[i] = {"code": "Hi Gan sha li ah"};
     }
-    }).then((response) => {
-        return res.json({
-          result: response.data
-        });
+  }
+
+  const payment_info = {
+    prime: '99736cfcc83c8af3f69c7ac1670928c29d116330583beeca84b5103432044532',
+    merchant_id: 'AppWorksSchool_CTBC',
+    amount: 1,
+    currency: "TWD",
+    details: "An apple and a pen.",
+    cardholder: {
+        phone_number: "+886923456789",
+        name: "王小明",
+        email: "LittleMing@Wang.com"
+    },
+    remember: true
+  }
+
+
+  TapPay.payByPrime(payment_info, async(error, result) => {
+    if(error)throw error; 
+
+    console.log(result);
+    if(result.msg == 'Success'){
+      userData[3] = true;
+    }
+
+    let post = {prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}`};
+    let sql = 'INSERT INTO week_2_part_2 SET ?';
+    let query = db.query(sql, post, (err, result) => {
+        if(err) throw err;
+        console.log("丟上mysql");
+        console.log(result);
     });
 
+    let sq = 'SELECT * FROM week_2_part_2';
+    let transResult = '';
+    let qu = db.query(sq, (err, results) =>{
+      if(err) throw err;
+
+      transResult = JSON.parse(JSON.stringify(results));
+      let printf = {'data':{'number':results.id}};
+
+      res.json(printf);
+      return 
+    });
+  
+  });
 
 });
 
@@ -155,15 +227,16 @@ app.post('/admin/campaign.html',upload.single('main'), (req, res) =>{
 });
 
 
+
 app.get('/api/1.0/marketing/campaigns', (req,res)=>{
   let sql = 'SELECT * FROM week_1_part_5';
-  let b = '';
+  let transResult = '';
   let query = db.query(sql, (err, results) =>{
       if(err) throw err;
-      b = JSON.parse(JSON.stringify(results));
+      transResult = JSON.parse(JSON.stringify(results));
       console.log(results);
       
-      let printf = {data:b};
+      let printf = {data:transResult};
 
       res.json(printf);
       return 
@@ -415,7 +488,7 @@ function selectuser(sql){
       if(err) throw err;
 
       let jg = false;
-      let b = result;
+      let transResult = result;
       
       if(result != ""){
        jg = true;
@@ -425,7 +498,7 @@ function selectuser(sql){
       // b = JSON.parse(JSON.stringify(result));
       
 
-      resolve(b);
+      resolve(transResult);
     });
   });  
 }
@@ -509,7 +582,7 @@ app.post('/api/1.0/user/signin', async(req, res)=>{
           res.send("email 或是 密碼 錯誤");
         }else{
 
-          let b = JSON.parse(JSON.stringify(email));
+          let transResult = JSON.parse(JSON.stringify(email));
 
           console.log("成功進入！")
           const token = jwt.sign({username: 'nano', email: req.body.email, password: newdata}, process.env.JWT_key,  {expiresIn: '3600s'}); //創造一個jwt
@@ -522,10 +595,10 @@ app.post('/api/1.0/user/signin', async(req, res)=>{
           alldata.data.access_token = token;
           alldata.data.access_expired = 3600;
           alldata.data.user = {};
-          alldata.data.user.id = b[0].id;
+          alldata.data.user.id = transResult[0].id;
           alldata.data.user.provider = "Nano";
-          alldata.data.user.name = b[0].username;
-          alldata.data.user.email = b[0].email;
+          alldata.data.user.name = transResult[0].username;
+          alldata.data.user.email = transResult[0].email;
           alldata.data.user.picture = "https://schoolvoyage.ga/images/123498.png";
 
           req.body.provider = 'Nano';
@@ -711,11 +784,11 @@ app.get('/addobj', (req, res)=>{
 //查看鮭魚的狀況
 app.get('/selectsalmon', (req, res)=>{
   let sql = 'SELECT * FROM salmon';
-  let b = '';
+  let transResult = '';
   let query = db.query(sql, (err, results) =>{
       if(err) throw err;
-      b = JSON.parse(JSON.stringify(results));
-      console.log(b.length);
+      transResult = JSON.parse(JSON.stringify(results));
+      console.log(transResult.length);
       console.log(results);
   });
   res.send('select....');
