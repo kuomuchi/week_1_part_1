@@ -711,12 +711,6 @@ app.get('/api/1.0/user/profile', (req, res)=>{
 ///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
 
 
-app.get('/admin/html/index.html', (req, res)=>{
-  res.sendFile(__dirname + '/public/html/index.html');
-  
-});
-
-
 
 
 

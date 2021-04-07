@@ -1,8 +1,111 @@
 <html>
+  <link href="/admin/html/css/product.css" rel="stylesheet">
+  <title>Ah HA!</title>
+  
   <body>
-    <h1>WHY YOU NULL THAT !!!!</h1>
-    <h1>BAD!!!!!!!!</h1>
-    <br><br>
-    <a href="/admin/product.html">back</a>
+    <div class="title_box">
+
+      <a href="/admin/html/index.html">
+        <img src="./images/logo.png" class="title_logo">
+      </a>
+      
+      <nav class="tags">
+        <div class="tag tag_women">女裝</div>
+        <div class="tag tag_men">男裝</div>
+        <div class="tag tag_accessories">配件</div>
+      </nav>
+      
+      <input type="text" id="title_search">
+
+      <nav class="icon">
+        <!-- 還要再修改href的位置  -->
+        <a href="/admin/html/index.html">
+          <div class="icon_car">
+            <div id="count">0</div>
+          </div>
+        </a>
+
+        <!-- 還要再修改href的位置  -->
+        <a href="/admin/html/index.html" id=user_profile>
+          <div class="icon_profile"></div>
+        </a>
+      </nav>
+
+    </div>
+
+    <div class="product" id="product">
+      <img class="product_main_image" id= "product_main_image">
+
+      <div class="product_detail">
+        <div class="product_title" id="product_title"></div>
+        <div class="product_id" id="product_id"></div>
+        <div class="product_price" id="product_price"></div>
+
+
+        <div class="product_variants">
+
+          <!-- 顏色選擇 -->
+          <div class="product_variant" id="product_variant">
+            <div class="product_variant_name">顏色｜</div>
+            <div class="product_colors" id="product_colors"></div>
+          </div>
+  
+          <!-- 尺寸選擇 -->
+          <div class="product_variant" id="product_variant">
+            <div class="product_variant_name">尺寸｜</div>
+            <div class="product_sizes" id="product_sizes"></div>
+          </div>
+
+          <!-- 數量選擇 -->
+          <div class="product_variant" id="product_variant">
+            <div class="product_variant_name">數量｜</div>
+            <div class="product_quantity">
+              <button id="decrement">-</button>
+              <div id="quantity">1</div>
+              <button id="increment">+</button>
+            </div>
+          </div>
+
+        </div>
+
+        <button id="add-to-cart">點擊：投入資本主義的懷抱</button>
+
+        <div class="product_note" id="product_note"></div>
+
+        <div class="product_texture" id="product_texture"></div>
+        <div class="product_description" id="product_description"></div>
+
+        <div class="product_wash" id="product_wash"></div>
+        <div class="product_place" id="product_place"></div>
+      </div>
+
+      <div class="seperator">更多產品資訊</div>
+
+      <div class="product_story" id="product_story"></div>
+
+      
+    </div>
+
+    <footer>
+      <nav>
+        <ul>
+          <li>關於統神</li>
+          <li>服務條款</li>
+          <li>隱私政策</li>
+          <li>聯絡..誰？</li>
+          <li>FQA...BC</li>
+        </ul>
+      </nav>
+      <div class="links">
+        <img src="./images/line.png">
+        <img src="./images/twitter.png">
+        <img src="./images/facebook.png">
+      </div>
+      
+      <div class="rights">© 2021. All rights reserved.</div>
+    </footer>
+
   </body>
+
+  <script src="./js/product.js"></script>
 </html>
