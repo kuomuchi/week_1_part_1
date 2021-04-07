@@ -73,5 +73,5 @@ xhr.onreadystatechange = function () {
 }
 
 // 抓取api資料
-xhr.open('GET', 'http://3.13.254.132//api/1.0/products/all', true)
+xhr.open('GET', 'http://3.13.254.132/api/1.0/products/all', true)
 xhr.send()
