@@ -608,6 +608,14 @@ app.get('/api/1.0/user/profile', (req, res) => {
 /// 開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
 /// 開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
 
+app.get('/admin/html/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/html/index.html'))
+})
+
+app.get('/admin/html/prodcut.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/html/prodcut.html'))
+})
+
 // test place
 
 app.get('/admin/test.html', (req, res) => {
