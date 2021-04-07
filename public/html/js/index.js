@@ -73,5 +73,5 @@ xhr.onreadystatechange = function () {
 }
 
 // 抓取api資料
-xhr.open('GET', 'http://hocalhost:3000/api/1.0/products/all')
+xhr.open('GET', 'http://3.13.254.132/api/1.0/products/all')
 xhr.send()
