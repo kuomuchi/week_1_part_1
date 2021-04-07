@@ -12,7 +12,7 @@ body{
   min-height: 100vh;
   line-height: 1;
 }
-html, div, body, .title_logo{
+html, div, body, .title_logo, img{
   margin: 0;
   padding: 0;
   border: 0;
@@ -165,7 +165,7 @@ html, div, body, .title_logo{
   width: 100%;
 }
 
-.product > img {
+.prudoct > img {
   width: 100%;
 }
 
