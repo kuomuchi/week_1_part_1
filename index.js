@@ -20,7 +20,7 @@ const { json } = require('body-parser');
 const { resolveCname } = require('dns');
 
 const axios = require('axios'); // 抓取外部的資訊 (for facebook 使用)
-const TapPay = require('tappay-nodejs')
+const TapPay = require('tappay-nodejs') // tapPay
 
 // You just need to initilize the config once.
 
@@ -470,7 +470,7 @@ async function getFacebookUserData(access_token) {
   });
   // console.log(data); // { id, email, first_name, last_name , picture}
   return data;
-};
+}
 
 
 //獲取加密的password
@@ -704,6 +704,16 @@ app.get('/api/1.0/user/profile', (req, res)=>{
   
 
   res.send(printout);
+});
+
+///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
+///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
+///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
+
+
+app.get('/admin/html/index.html', (req, res)=>{
+  res.sendFile(__dirname + '/public/html/index.html');
+  
 });
 
 

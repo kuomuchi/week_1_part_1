@@ -1,0 +1,198 @@
+*{
+  box-sizing: border-box;
+}
+
+a{
+  color: inherit;
+  text-decoration: none;
+}
+
+
+body{
+  min-height: 100vh;
+  line-height: 1;
+}
+html, div, body, .title_logo{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+
+
+/* title本人 */
+.title_box{
+  height: 140px;
+  width: 100vw;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  border-bottom: 40px solid #313538;
+  z-index: 5;
+  background-color: white;
+}
+
+.title_logo{
+  height: 48px;
+}
+
+.tags{
+  width: 450px;
+  margin-left: 57px;
+  display: flex;
+}
+
+.tag{
+  letter-spacing: 16px;
+  text-indent: 16px;
+  font-size: 20px;
+  color: #3f3a3a;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.tag_men, .tag_accessories{
+  border-left: 2px solid #3f3a3a;
+}
+
+
+#title_search{
+  width: 214px;
+  height: 40px;
+  padding: 8px 48px 8px 20px;
+  border: solid 1px #979797;
+  border-radius: 20px;
+  outline: none;
+  font-size: 20px;
+  background-image: url(../images/search.png);
+  background-repeat: no-repeat;
+  background-position: right center;
+  margin-left: auto;
+}
+
+.icon{
+  width: 130px;
+  margin-left: 42px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon > a{
+  cursor: pointer;
+}
+.icon_car{
+  position: relative;
+  width: 44px;
+  height: 44px;
+  background-image: url(../images/cart.png);
+}
+
+
+/* 購物車的數字 */
+#count{
+  position: absolute;
+  text-align: center;
+  background-color: #8b572a;
+  font-weight: bold;
+  border-radius: 50%;
+  color: #ffffff;
+  opacity: 0.8;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  bottom: 0;
+  right: 0;
+}
+
+.user_profile{
+  cursor: pointer;
+}
+
+.icon_profile{
+  margin-left: 24px;
+  width: 44px;
+  height: 44px;
+  background-image: url(../images/member.png);
+}
+
+/* 接下來是大圖片，初版不會加上src在圖片上，盡量簡化 */
+.ad_box{
+  height: 500px;
+  position: relative;
+}
+
+.campaign{
+  text-decoration:none;
+  background-image: url(https://api.appworks-school.tw/assets/201807242228/keyvisual.jpg);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-position: center;
+  z-index: 1;
+}
+
+.campaign_text{
+  width: 100%;
+  max-width: 1160px;
+  margin: 166px auto 0;
+  padding-left: 27px;
+  font-size: 30px;
+  font-weight: 100;
+  color: #070707;
+  line-height: 57px;
+  white-space: pre;
+}
+
+.product_box{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 50px 40px;
+  max-width: 1160px;
+  padding: 70px 24px;
+  margin: 0 auto;
+}
+
+
+
+.product{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.product > img {
+  width: 100%;
+}
+
+.product__colors{
+  display: flex;
+  margin-top: 20px;
+}
+
+.product__color{
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  box-shadow: 0px 0px 1px #bbbbbb;
+}
+
+.product__title{
+  margin-top: 20px;
+  line-height: 24px;
+  font-size: 20px;
+  letter-spacing: 4px;
+  color: #3f3a3a
+}
+
+.product__price{
+  margin-top: 10px;
+  line-height: 24px;
+  font-size: 20px;
+  letter-spacing: 4px;
+  color: #3f3a3a;
+}
