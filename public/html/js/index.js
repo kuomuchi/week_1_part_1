@@ -19,7 +19,7 @@ xhr.onreadystatechange = function () {
       // 新增ClassName
       addNewChild.classList.add('prudoct')
       // 設置觸發跳轉的頁面，跳轉頁面為id
-      addNewChild.href = `/admin/html/product.html?id＝${objData.data[i].id}`
+      addNewChild.href = `/product.html?id＝${objData.data[i].id}`
       addNewChild.textContent = objData.data[i].id
       // 將新child push上來。
       outElement.appendChild(addNewChild)

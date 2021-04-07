@@ -325,6 +325,7 @@ function getWebApi (sq, page) {
     let web
     const query = db.query(sq, (err, result) => {
       if (err) throw err
+
       web = JSON.parse(JSON.stringify(result))
 
       console.log(web)
@@ -612,8 +613,8 @@ app.get('/index.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/index.html'))
 })
 
-app.get('/admin/html/prodcut.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/html/prodcut.html'))
+app.get('/product.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/html/product.html'))
 })
 
 // test place
