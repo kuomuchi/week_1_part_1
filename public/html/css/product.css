@@ -1,5 +1,6 @@
 *{
   box-sizing: border-box;
+  transition-duration: 0.5s;
 }
 
 div{
@@ -202,6 +203,11 @@ body{
   box-shadow: 0px 0px 1px #bbbbbb;
 }
 
+.product_color_select{
+  outline: 1px solid #979797;
+}
+
+
 
 .product_sizes{
   display: flex;
@@ -220,6 +226,11 @@ body{
   cursor: pointer;
 }
 
+.product_size_select{
+  background-color: black;
+  color: white;
+}
+
 .product_quantity{
   width: 160px;
   height: 44px;
@@ -235,6 +246,10 @@ body{
 #decrement, #increment{
   font-size: inherit;
   cursor: pointer;
+}
+
+#decrement:hover, #increment:hover{
+  background-color: #ccc
 }
 
 
@@ -298,6 +313,8 @@ body{
 }
 
 
+
+/* 最底下的部分 */
 footer{
   display: block;
   height: 115px;

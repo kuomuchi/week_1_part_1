@@ -46,8 +46,7 @@ app.use('/admin', express.static('public'))
 
 app.get('/', (req, res) => {
   // res.sendFile(__dirname + '/public/welcome.html');
-  console.log('Ko No Dio Da!!!')
-  res.json(JSON.parse(['{"x":"2", "y":"3"}']))
+  res.sendFile(path.join(__dirname, '/public/html/index.html'))
 })
 
 // connect db
@@ -360,6 +359,7 @@ function getWebApi (sq, page) {
         allthing.data = web
       }
       if (nextg === 0) {
+        console.log(nextg)
       } else {
         allthing.next_paging = +page + 1
       }
@@ -615,6 +615,10 @@ app.get('/index.html', (req, res) => {
 
 app.get('/product.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/product.html'))
+})
+
+app.post('/product.html', (req, res) => {
+
 })
 
 // test place
