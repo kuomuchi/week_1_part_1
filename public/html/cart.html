@@ -1,0 +1,176 @@
+<html>
+  <link href="/admin/html/css/cart.css" rel="stylesheet">
+  <title>STYLiSH 2021</title>
+  
+  <body>
+
+
+    <div class="title_box">
+
+      <a href="/index.html">
+        <img src="./admin/html/images/logo.png" class="title_logo">
+      </a>
+      
+      <nav class="tags">
+        <div class="tag tag_women">女裝</div>
+        <div class="tag tag_men">男裝</div>
+        <div class="tag tag_accessories">配件</div>
+      </nav>
+      
+      <input type="text" id="title_search">
+
+      <nav class="icon">
+        <!-- 還要再修改href的位置  -->
+        <a href="/index.html">
+          <div class="icon_car">
+            <div id="count">0</div>
+          </div>
+        </a>
+
+        <!-- 還要再修改href的位置  -->
+        <a href="/api/1.0/user/signin" id=user_profile>
+          <div class="icon_profile"></div>
+        </a>
+      </nav>
+    </div>
+
+    <div id='cart'>
+
+      <!-- 購物車的title -->
+      <div class='header'>
+        <div class='itemTitle'>購物車(0)</div>
+        <div class='itemQuantity'>數量</div>
+        <div class='itemPrice'>單價</div>
+        <div class='itemSubtotal'>小計</div>
+        <div class='itemRemove'></div>
+      </div>
+
+      <!-- 放置Product_box -->
+      <div class='items' id='items'></div>
+
+      <!-- 選擇配送區域，以及方式 -->
+      <div class='shipment'>
+        <div class='shipmentName'>配送國家</div>
+        <select class="shipment_select">
+          <option value="Only台灣">Only台灣</option>
+        </select>
+
+        <div class='shipmentName'>付款方式</div>
+        <select class="shipment_select">
+          <option value="信用cart">信用cart</option>
+        </select>
+
+      </div>
+
+      <!-- 說明 -->
+      <div class='reminder'>
+        ※ 提醒您：<br>
+        ● 選擇宅配-請填寫正確收件人資訊，避免包裹配送不達<br>
+        ● 選擇超商-請填寫正確收件人姓名(與證件相符)，避免無法領取<br>
+      </div>
+
+      <div class='formHeader'>訂購資料</div>
+
+      <!-- 表單 -->
+      <div class='form'>
+        <div class='field'>
+          <div class='field_name' for='name'>收件人姓名</div>
+          <div class='field_input'>
+            <input type="text" id="name" class='input'>
+          </div>
+        </div>
+
+        <div class='field'>
+          <div class='field_name' for='email'>Email</div>
+          <div class='field_input'>
+            <input type="text" id="email" class='input'>
+          </div>
+        </div>
+
+        <div class='field'>
+          <div class='field_name' for='phone'>手機號碼</div>
+          <div class='field_input'>
+            <input type="text" id="phone" class='input'>
+          </div>
+        </div>
+
+        <div class='field'>
+          <div class='field_name' for='address'>收件地址</div>
+          <div class='field_input'>
+            <input type="text" id="address" class='input'>
+          </div>
+        </div>
+
+
+        <div class='field'>
+          <div class='field_name' for='time'>配送時間</div>
+          <div class='field_input'>
+            <input type="radio" value="anytime" id="anytime" name="time" checked="checked">
+            <label for="anytime">不指定</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 輸入信用卡的部分 -->
+      <div class='formHeader'>付款資料</div>
+      <div class='form'>
+        <div class='cardviewSetting'>
+          <h4>輸入信用卡的部分:</h4>
+          <div id='cardviewContainer'></div>
+          <br>
+        </div>
+      </div>
+
+
+      <!-- 結帳 -->
+      <div class='summary'>
+        <div class='subtotal' id='subtotal'>
+          <div class='name'>總金額</div>
+          <div class='value'>
+            NT.
+            <span>0</span>
+          </div>
+        </div>
+
+        <!-- 總金額 -->
+        <div class='total' id='total'>
+          <div class='name'>應付金額</div>
+          <div class='value'>
+            NT.
+            <span>0</span>
+          </div>
+        </div>
+        <!-- 結帳按鈕 -->
+        <button id='checkout'>確認付款</button>
+      </div>
+
+    </div>
+
+
+    <!-- 關於我們 -->
+    <footer>
+      <nav>
+        <ul>
+          <li>關於統神</li>
+          <li>服務條款</li>
+          <li>隱私政策</li>
+          <li>聯絡..誰？</li>
+          <li>FQA...BC</li>
+        </ul>
+      </nav>
+      <div class="links">
+        <img src="./admin/html/images/line.png">
+        <img src="./admin/html/images/twitter.png">
+        <img src="./admin/html/images/facebook.png">
+      </div>
+      
+      <div class="rights">© 2021. All rights reserved.</div>
+    </footer>
+
+
+  </body>
+
+  <script src="https://js.tappaysdk.com/tpdirect/v5.5.1"></script>
+  <script src="./admin/html/js/cart.js"></script>
+  
+</html>

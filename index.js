@@ -610,6 +610,7 @@ app.get('/api/1.0/user/profile', (req, res) => {
 /// 開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
 
 app.get('/index.html', (req, res) => {
+  console.log('get in')
   res.sendFile(path.join(__dirname, '/public/html/index.html'))
 })
 
@@ -617,8 +618,13 @@ app.get('/product.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/product.html'))
 })
 
-app.post('/product.html', (req, res) => {
+app.get('/cart.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/html/cart.html'))
+})
 
+app.post('/product.html', (req, res) => {
+  console.log('nice')
+  res.send('no thing!!!')
 })
 
 // test place

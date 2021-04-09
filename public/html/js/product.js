@@ -3,6 +3,7 @@ console.log('konodioda')
 const xhr = new XMLHttpRequest()
 const productNowSelect = []
 const objVariants = { data: {} }
+const objProduct = {}
 
 // 獲得資料，準備新增東西。
 xhr.onreadystatechange = function () {
@@ -14,9 +15,12 @@ xhr.onreadystatechange = function () {
     // 將data的資料整理成obj
     const objData = JSON.parse(data)
 
+    // 將資料帶出
+    objProduct.data = objData.data
+    console.log(objProduct)
+
     // 將data裡面的variants取出
     objVariants.data = objData.data.variants
-    console.log(objVariants)
 
     // pass data image
     document.getElementById('product_main_image').src = `${objData.data.main_image}`
@@ -50,6 +54,8 @@ xhr.onreadystatechange = function () {
         } else if (nowColor === 'rgb(0, 0, 255)') {
           productNowSelect[0] = '#0000ff'
         }
+        // 重置數量
+        productNowSelect[3] = 1
         document.getElementById('quantity').textContent = 1
 
         addNewChild.classList.add('product_color_select')
@@ -71,8 +77,10 @@ xhr.onreadystatechange = function () {
           document.getElementsByClassName('product_size')[u].classList.remove('product_size_select')
         }
 
+        // 重置數量
         const nowSize = addNewChild.textContent
         productNowSelect[1] = nowSize
+        productNowSelect[3] = 1
         document.getElementById('quantity').textContent = 1
 
         addNewChild.classList.add('product_size_select')
@@ -109,6 +117,7 @@ xhr.onreadystatechange = function () {
 
       if (+nowNum > 1) {
         nowNum = +nowNum - 1
+        productNowSelect[3] = nowNum
         document.getElementById('quantity').textContent = nowNum
       }
     })
@@ -129,9 +138,19 @@ xhr.onreadystatechange = function () {
       let nowNum = document.getElementById('quantity').textContent
       if (+nowNum < maxStorck) {
         nowNum = +nowNum + 1
+        productNowSelect[3] = nowNum
+
         document.getElementById('quantity').textContent = nowNum
       }
     })
+  }
+
+  // 設定購物車的icon數量
+  const carNumber = JSON.parse(localStorage.getItem('car'))
+  if (carNumber == null) {
+    document.getElementById('count').textContent = 0
+  } else {
+    document.getElementById('count').textContent = carNumber.length
   }
 }
 
@@ -141,9 +160,64 @@ const productId = queryParamsString[1]
 xhr.open('GET', `http://3.13.254.132/api/1.0/products/details?id=${productId}`, true)
 xhr.send()
 
-// setTimeout(() => {
-//   console.log('tjh')
-//   console.log(document.getElementsByClassName('product_color')[0])
-// }, 100)
+// 將產品加入購物車
+document.getElementById('add-to-cart').addEventListener('click', () => {
+  if (productNowSelect[0] !== undefined && productNowSelect[1] !== undefined) {
+    const xhrButtone = new XMLHttpRequest()
 
-// 新增簡單？的點擊動畫
+    xhrButtone.open('POST', 'http://3.13.254.132/product.html', true)
+    xhrButtone.setRequestHeader('Content-type', 'application/json')
+
+    // Product整理資料
+    const newProduct = {}
+    newProduct.id = objProduct.data.id
+    newProduct.name = objProduct.data.title
+    newProduct.price = objProduct.data.price
+    newProduct.color = productNowSelect[0]
+    newProduct.size = productNowSelect[1]
+    newProduct.stock = productNowSelect[3]
+    newProduct.images = objProduct.data.main_image
+
+    const youCar = JSON.parse(localStorage.getItem('car'))
+
+    if (youCar == null) {
+      // 如果local沒有資料，直接阿斯！
+      window.localStorage.setItem('car', JSON.stringify([newProduct]))
+    } else {
+      // 把local的資料拆開
+      const allProduct = []
+      let ifAdd = 0
+      for (let i = 0; i < youCar.length; i++) {
+        // 將重複的product整理成同個LocalStorage
+        if (newProduct.color === youCar[i].color && newProduct.size === youCar[i].size) {
+          youCar[i].stock = (newProduct.stock + youCar[i].stock)
+          allProduct[i] = youCar[i]
+          ifAdd = 1
+        } else {
+          allProduct[i] = youCar[i]
+        }
+      }
+      // 把最後的資料放入
+      if (ifAdd === 0) {
+        allProduct.push(newProduct)
+        window.localStorage.setItem('car', JSON.stringify(allProduct))
+      } else {
+        window.localStorage.setItem('car', JSON.stringify(allProduct))
+      }
+    }
+
+    // 傳送資料到後端
+    const userData = JSON.stringify(newProduct) // 問題4你!
+    xhrButtone.send(userData)
+    // 更改購物車的Num
+    const carNumber = JSON.parse(localStorage.getItem('car')).length
+    if (carNumber == null) {
+      document.getElementById('count').textContent = 0
+    } else {
+      document.getElementById('count').textContent = carNumber
+    }
+  } else {
+    alert('你想買三毀..?\n當我塑膠？以為這樣就會error？')
+    console.log('你想買三毀..?你他X的...什麼都沒有選...你....甘..')
+  }
+})

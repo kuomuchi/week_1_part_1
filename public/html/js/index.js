@@ -3,6 +3,7 @@ console.log('hi')
 const xhr = new XMLHttpRequest()
 
 // 獲得資料，準備新增東西。
+
 xhr.onreadystatechange = function () {
   if (xhr.readyState === 4) {
     const data = xhr.responseText
@@ -69,6 +70,14 @@ xhr.onreadystatechange = function () {
       // push Child
       outElement.appendChild(addNewChild)
     }
+  }
+
+  // 設定購物車的icon數量
+  const carNumber = JSON.parse(localStorage.getItem('car'))
+  if (carNumber == null) {
+    document.getElementById('count').textContent = 0
+  } else {
+    document.getElementById('count').textContent = carNumber.length
   }
 }
 
