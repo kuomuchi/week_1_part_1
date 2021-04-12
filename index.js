@@ -495,16 +495,13 @@ app.post('/api/1.0/user/signin', async (req, res) => {
       // 搜尋email
 
       selectuser(sql).then((email) => {
-        console.log('this is')
-        console.log(email)
-
         if (email === '') {
           res.send('email 或是 密碼 錯誤')
         } else {
           const transResult = JSON.parse(JSON.stringify(email))
 
           console.log('成功進入！')
-          const token = jwt.sign({ username: 'nano', email: req.body.email, password: newdata }, process.env.JWT_key, { expiresIn: '3600s' }) // 創造一個jwt
+          const token = jwt.sign({ username: email[0].username, email: req.body.email, password: newdata }, process.env.JWT_key, { expiresIn: '3600s' }) // 創造一個jwt
 
           req.headers.authorization = 'Bearer ' + token // 將jwt存入header
 
@@ -544,7 +541,9 @@ app.post('/api/1.0/user/signup', (req, res) => {
   // 判斷email是否重複
   selectuser(sql).then((email) => {
     // 沒有重複的話，直接註冊7小時。
-    if (email === '') {
+
+    if (email == '') {
+      console.log('keep')
       addpass(user[2]).then((data) => {
         const newdata = data
         const post = { username: user[0], email: user[1], password: newdata }
@@ -584,11 +583,17 @@ app.post('/api/1.0/user/signup', (req, res) => {
   console.log('出去signup')
 })
 
-app.get('/api/1.0/user/profile', (req, res) => {
-  const gettoken = req.headers.authorization.split(' ')[1]
-  console.log(gettoken)
+app.post('/api/1.0/user/profile', (req, res) => {
+  console.log(req.headers)
+  console.log(req.body.token)
+
+  const gettoken = req.body.token
+
+  // const gettoken = req.headers.authorization.split(' ')[1]
+
   const decoded = jwt.verify(gettoken, process.env.JWT_key)
   const printout = { data: {} }
+  console.log(decoded)
 
   if (decoded.password === undefined) {
     printout.data.provider = 'facebook'
@@ -622,6 +627,7 @@ app.get('/cart.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/cart.html'))
 })
 
+// 購物車消費
 app.post('/cart.html', (req, res) => {
   console.log(req.body)
 
@@ -678,6 +684,14 @@ app.post('/cart.html', (req, res) => {
 app.post('/product.html', (req, res) => {
   console.log('nice')
   res.send('no thing!!!')
+})
+
+app.get('/profile.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/html/profile.html'))
+})
+
+app.get('/thankyou.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/html/thankyou.html'))
 })
 
 // test place

@@ -177,7 +177,6 @@ for (let i = 0; i < carNumber.length; i++) {
 
       // 把local的資料拆開
       const allProduct = []
-      const ifAdd = 0
 
       for (let i = 0; i < youCar.length; i++) {
         // 將重複的product整理成同個LocalStorage
@@ -286,6 +285,7 @@ document.getElementById('checkout').addEventListener('click', () => {
         if (str.status !== undefined) {
           alert('操作失誤，請聯繫我:D')
         } else {
+          localStorage.setItem('oderNumber', str.data)
           alert('你的訂單編號為：' + str.data)
         }
       }
