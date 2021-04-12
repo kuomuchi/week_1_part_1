@@ -2,6 +2,11 @@ console.log('成功進入購物車')
 document.querySelectorAll('div.value > span')[0].textContent = 0
 document.querySelectorAll('div.value > span')[1].textContent = 0
 
+const trollThing = localStorage.getItem('troll')
+if (+trollThing === 5) {
+  document.getElementById('ImBad').style.display = 'block'
+}
+
 const getCatLength = JSON.parse(localStorage.getItem('car'))
 document.getElementById('itemTitle').textContent = '購物車(' + getCatLength.length + ')'
 
@@ -91,8 +96,28 @@ for (let i = 0; i < carNumber.length; i++) {
   outElement = document.getElementsByClassName('itemQ')[i]
   newItem = document.createElement('div')
   newItem.textContent = `${carNumber[i].stock}`
+
+  // 當數量被點擊
   newItem.addEventListener('click', () => {
-    alert('點我幹嘛？')
+    const gN = localStorage.getItem('troll')
+    if (gN === null) {
+      alert('點我幹嘛？')
+      localStorage.setItem('troll', 1)
+    } else if (+gN === 1) {
+      alert('母湯喔！\n這裡有特殊的設定！')
+      localStorage.setItem('troll', 2)
+    } else if (+gN === 2) {
+      alert('警告過你了！！不要再按了喔！')
+      localStorage.setItem('troll', 3)
+    } else if (+gN === 3) {
+      alert('在按下去會有不可逆的後果啊！\n這個功能我真的有做！')
+      localStorage.setItem('troll', 4)
+    } else if (+gN === 4) {
+      alert('最終警告！\n若是在按下去...我會..')
+      localStorage.setItem('troll', 5)
+    } else if (+gN === 5) {
+      document.getElementById('ImBad').style.display = 'block'
+    }
   })
   outElement.appendChild(newItem)
 
@@ -221,7 +246,7 @@ document.getElementById('checkout').addEventListener('click', () => {
     console.log(getUserData)
 
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', 'http://localhost:3000/cart.html', true)
+    xhr.open('POST', 'http://3.13.254.132/cart.html', true)
     xhr.setRequestHeader('Content-type', 'application/json')
 
     TPDirect.card.getPrime(function (result) {
