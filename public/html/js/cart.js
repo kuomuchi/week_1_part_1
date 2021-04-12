@@ -287,6 +287,7 @@ document.getElementById('checkout').addEventListener('click', () => {
         } else {
           localStorage.setItem('oderNumber', str.data)
           alert('你的訂單編號為：' + str.data)
+          window.location.href = 'http://3.13.254.132/thankyou.html'
         }
       }
     }
