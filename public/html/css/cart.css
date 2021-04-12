@@ -145,7 +145,7 @@ body{
 
 .header{
   font-size: 16px;
-  padding-right: 31px;
+  padding-right: 110px;
   display: flex;
   line-height: 19px;
 }
@@ -177,6 +177,75 @@ body{
   border: solid 1px #979797;
   margin-top: 16px;
 }
+
+
+.item {
+  display: flex;
+  align-items: center;
+  
+}
+
+.itemImage{
+  width: 114px;
+  margin-right: 20px;
+}
+
+.itemDetail{
+  line-height: 19px;
+  align-self: flex-start;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.itemId{
+  margin-top: 18px;
+}
+
+.itemColor{
+  margin-top: 22px;
+}
+
+.itemSize{
+  margin-top: 10px;
+}
+
+.itemQ{
+  width: 173px;
+  text-align: center;
+  flex-shrink: 1;
+}
+
+.itemQ > div{
+  width: 80px;
+  height: 30px;
+  padding: 7px 10px 7px 17px;
+  box-shadow: inset 20px 3px gold, 10px -6px teal;;
+  border-radius: 8px;
+  border: solid 1px #979797;
+  border-right-style:none;
+  border-bottom-style: none;
+  background-color: #f3f3f3;
+  cursor: pointer;
+}
+
+.itemPr, .itemSu{
+  width: 173px;
+  text-align: center;
+  flex-shrink: 1;
+}
+
+.itemRe{
+  width: 84px;
+  text-align: right;
+  flex-shrink: 1;
+}
+
+.removeIcon{
+  cursor: pointer;
+}
+  
+
+
 
 .shipment{
   width: 100%;

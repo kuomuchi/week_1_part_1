@@ -622,6 +622,59 @@ app.get('/cart.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/cart.html'))
 })
 
+app.post('/cart.html', (req, res) => {
+  console.log(req.body)
+
+  const uderData = req.body
+  uderData.pay = false
+  console.log(uderData.email)
+
+  const paymentInfo = {
+    prime: uderData.prime,
+    merchant_id: 'AppWorksSchool_CTBC',
+    amount: uderData.product.length,
+    currency: 'TWD',
+    details: 'nano',
+    cardholder: {
+      phone_number: uderData.phone,
+      name: uderData.name,
+      email: uderData.email
+    },
+    remember: true
+  }
+
+  TapPay.payByPrime(paymentInfo, async (error, result) => {
+    if (error) throw error
+
+    console.log(result)
+    if (result.msg === 'Success') {
+      uderData.pay = true
+    }
+
+    if (uderData.pay === false) {
+      res.send(result)
+    } else {
+      const post = { prime: uderData.prime, oder: `${JSON.stringify(paymentInfo)}`, list: `${JSON.stringify(uderData.product)}`, pay: `${uderData.pay}` }
+      const sql = 'INSERT INTO week_2_part_2 SET ?'
+      const query = db.query(sql, post, (err, result) => {
+        if (err) throw err
+        console.log('丟上mysql')
+      })
+
+      const sq = 'SELECT * FROM week_2_part_2'
+      // let transResult = "";
+      const qu = db.query(sq, (err, results) => {
+        if (err) throw err
+
+        const transResult = JSON.parse(JSON.stringify(results))
+        const dealData = transResult.length
+        const printf = { data: transResult[dealData - 1].id }
+        res.json(printf)
+      })
+    }
+  })
+})
+
 app.post('/product.html', (req, res) => {
   console.log('nice')
   res.send('no thing!!!')
@@ -641,7 +694,7 @@ app.post('/admin/test.html', upload.array('main', 3), (req, res) => {
   } else {
     // 你棒棒！！並且回傳圖片的位置。哭啊！
     // console.log(req.files+" + "+ req.files.length +" + "+ req.files[0].destination);
-    console.log(req.files)
+    // console.log(req.files)
     res.json({ upload: req.files })
   }
 })
