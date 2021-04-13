@@ -116,66 +116,66 @@ TapPay.initialize({
   env: 'sandbox'
 })
 
-// app.post('/order/checkout', async (req, res) => {
-//   const userData = []
+app.post('/order/checkout', async (req, res) => {
+  const userData = []
 
-//   userData[0] = req.body.prime
-//   userData[1] = req.body.order
-//   userData[2] = req.body.list
-//   userData[3] = false
+  userData[0] = req.body.prime
+  userData[1] = req.body.order
+  userData[2] = req.body.list
+  userData[3] = false
 
-//   if (userData[0] === undefined) {
-//     userData[0] = 'naaaaa'
-//   }
+  if (userData[0] === undefined) {
+    userData[0] = 'naaaaa'
+  }
 
-//   for (let i = 1; i < 3; i++) {
-//     if (userData[i] === undefined) {
-//       userData[i] = { code: 'Hi Gan sha li ah' }
-//     }
-//   }
+  for (let i = 1; i < 3; i++) {
+    if (userData[i] === undefined) {
+      userData[i] = { code: 'Hi Gan sha li ah' }
+    }
+  }
 
-//   // const paymentInfo = {
-//   //   prime: '99736cfcc83c8af3f69c7ac1670928c29d116330583beeca84b5103432044532',
-//   //   merchant_id: 'AppWorksSchool_CTBC',
-//   //   amount: 1,
-//   //   currency: 'TWD',
-//   //   details: 'An apple and a pen.',
-//   //   cardholder: {
-//   //     phone_number: '+886923456789',
-//   //     name: '王小明',
-//   //     email: 'LittleMing@Wang.com'
-//   //   },
-//   //   remember: true
-//   // }
+  const paymentInfo = {
+    prime: '99736cfcc83c8af3f69c7ac1670928c29d116330583beeca84b5103432044532',
+    merchant_id: 'AppWorksSchool_CTBC',
+    amount: 1,
+    currency: 'TWD',
+    details: 'An apple and a pen.',
+    cardholder: {
+      phone_number: '+886923456789',
+      name: '王小明',
+      email: 'LittleMing@Wang.com'
+    },
+    remember: true
+  }
 
-//   TapPay.payByPrime(paymentInfo, async (error, result) => {
-//     if (error) throw error
+  TapPay.payByPrime(paymentInfo, async (error, result) => {
+    if (error) throw error
 
-//     console.log(result)
-//     if (result.msg === 'Success') {
-//       userData[3] = true
-//     }
+    console.log(result)
+    if (result.msg === 'Success') {
+      userData[3] = true
+    }
 
-//     const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
-//     const sql = 'INSERT INTO week_2_part_2 SET ?'
-//     const query = db.query(sql, post, (err, result) => {
-//       if (err) throw err
-//       console.log('丟上mysql')
-//       console.log(result)
-//     })
+    const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
+    const sql = 'INSERT INTO week_2_part_2 SET ?'
+    const query = db.query(sql, post, (err, result) => {
+      if (err) throw err
+      console.log('丟上mysql')
+      console.log(result)
+    })
 
-//     const sq = 'SELECT * FROM week_2_part_2'
-//     // let transResult = "";
-//     const qu = db.query(sq, (err, results) => {
-//       if (err) throw err
+    const sq = 'SELECT * FROM week_2_part_2'
+    // let transResult = "";
+    const qu = db.query(sq, (err, results) => {
+      if (err) throw err
 
-//       // transResult = JSON.parse(JSON.stringify(results));
-//       const printf = { data: { number: results.id } }
+      // transResult = JSON.parse(JSON.stringify(results));
+      const printf = { data: { number: results.id } }
 
-//       res.json(printf)
-//     })
-//   })
-// })
+      res.json(printf)
+    })
+  })
+})
 
 // week_1_part_5
 
