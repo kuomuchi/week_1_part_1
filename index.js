@@ -8,6 +8,7 @@ const mysql = require('mysql') // mysql
 const app = express()
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
 const uuid = require('uuid').v4 // 處理image的東東
+const { get } = require('http')
 
 const jwt = require('jsonwebtoken')
 
@@ -20,9 +21,9 @@ const { resolveCname } = require('dns')
 
 const axios = require('axios') // 抓取外部的資訊 (for facebook 使用)
 const TapPay = require('tappay-nodejs') // tapPay
+const e = require('express')
 
-const NodeCache = require('node-cache') // cache，快取資料的req
-const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 }) // cache，快取資料的req
+// You just need to initilize the config once.
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -41,6 +42,8 @@ const upload = multer({ storage })
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/admin', express.static('public'))
+
+// app.set('public engine', 'html');
 
 app.get('/', (req, res) => {
   // res.sendFile(__dirname + '/public/welcome.html');
@@ -319,61 +322,52 @@ app.get('/image/:id', (req, res) => {
 // 抓取MySQL的資料，抓取page的後6比資料
 function getWebApi (sq, page) {
   return new Promise((resolve, reject) => {
-    const getData = myCache.get('myKey')
-    // 如果快存裡面沒有資料，則重新拿獲取資料
-    if (getData === undefined) {
-      console.log('重新撈資料')
-      let web
-      const query = db.query(sq, (err, result) => {
-        if (err) throw err
+    let web
+    const query = db.query(sq, (err, result) => {
+      if (err) throw err
 
-        web = JSON.parse(JSON.stringify(result))
+      web = JSON.parse(JSON.stringify(result))
 
-        let nextg = 1
-        const allthing = {}
+      console.log(web)
 
-        // 將所有資料裡的 string 轉換為 obj
-        for (let i = 0; i < web.length; i++) {
-          if (web[i] == null) break
-          web[i].colors = JSON.parse(web[i].colors)
-          web[i].sizes = JSON.parse(web[i].sizes)
-          web[i].variants = JSON.parse(web[i].variants)
-          web[i].images = JSON.parse(web[i].images)
-        }
+      let nextg = 1
+      const allthing = {}
 
-        // 如果第7比資料是null，將不會回將paging的物件。
-        if (web[6] == null) {
-          nextg = 0
-        }
+      // 將所有資料裡的 string 轉換為 obj
+      for (let i = 0; i < web.length; i++) {
+        if (web[i] == null) break
+        web[i].colors = JSON.parse(web[i].colors)
+        web[i].sizes = JSON.parse(web[i].sizes)
+        web[i].variants = JSON.parse(web[i].variants)
+        web[i].images = JSON.parse(web[i].images)
+      }
 
-        if (web.length === 7) {
-          web.pop()
-        }
+      // 如果第7比資料是null，將不會回將paging的物件。
+      if (web[6] == null) {
+        nextg = 0
+      }
 
-        // 因作業需求，新增了一個名為Data的key
-        // 其Value為 MySQl抓下來的所有資料。
+      if (web.length === 7) {
+        web.pop()
+      }
 
-        if (web.length === 1) {
-          allthing.data = web[0]
-        } else {
-          allthing.data = web
-        }
-        if (nextg === 0) {
-          console.log(nextg)
-        } else {
-          allthing.next_paging = +page + 1
-        }
+      // 因作業需求，新增了一個名為Data的key
+      // 其Value為 MySQl抓下來的所有資料。
 
-        // 回傳allthing
+      if (web.length === 1) {
+        allthing.data = web[0]
+      } else {
+        allthing.data = web
+      }
+      if (nextg === 0) {
+        console.log(nextg)
+      } else {
+        allthing.next_paging = +page + 1
+      }
 
-        myCache.set('myKey', allthing, 10000)
-        resolve(allthing)
-      })
-    } else {
-      console.log('使用快取')
-      const apiData = myCache.get('myKey')
-      resolve(apiData)
-    }
+      // 回傳allthing
+      resolve(allthing)
+    })
   })
 }
 
@@ -598,7 +592,6 @@ app.post('/api/1.0/user/profile', (req, res) => {
   console.log('我是分隔線')
   console.log(req.headers)
   console.log('我是分隔線')
-  console.log(req.header)
 
   const gettoken = req.body.token
 
