@@ -112,7 +112,7 @@ app.post('/order/checkout', (req, res) => {
 })
 
 TapPay.initialize({
-  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
+  // partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
   env: 'sandbox'
 })
 
