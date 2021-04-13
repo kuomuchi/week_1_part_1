@@ -21,6 +21,12 @@ const { resolveCname } = require('dns')
 
 const axios = require('axios') // 抓取外部的資訊 (for facebook 使用)
 const TapPay = require('tappay-nodejs') // tapPay
+
+TapPay.initialize({
+  partner_key: process.env.TapPay_key,
+  env: 'sandbox'
+})
+
 const e = require('express')
 
 // You just need to initilize the config once.
@@ -112,11 +118,6 @@ app.post('/admin/checkout.html', (req, res) => {
 app.post('/order/checkout', (req, res) => {
   console.log(req.headers)
   console.log(req.body)
-})
-
-TapPay.initialize({
-  partner_key: process.env.TapPay_key,
-  env: 'sandbox'
 })
 
 app.post('/order/checkout', async (req, res) => {
