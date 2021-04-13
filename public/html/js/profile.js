@@ -9,11 +9,11 @@ console.log(getUser)
 if (getUser.token !== null) {
   console.log('login')
 } else {
-  window.location.href = 'http://3.13.254.132/api/1.0/user/signin'
+  window.location.href = 'http://localhost:3000/api/1.0/user/signin'
 }
 
 const xhr = new XMLHttpRequest()
-xhr.open('POST', 'http://3.13.254.132/api/1.0/user/profile', true)
+xhr.open('POST', 'http://localhost:3000/api/1.0/user/profile', true)
 xhr.setRequestHeader('Content-type', 'application/json')
 
 const getToken = localStorage.getItem('access_token')
@@ -30,7 +30,7 @@ xhr.onload = function () {
 
     document.getElementById('logout').addEventListener('click', () => {
       localStorage.removeItem('access_token')
-      window.location.href = 'http://3.13.254.132/index.html'
+      window.location.href = 'http://localhost:3000/index.html'
     })
   }
 }

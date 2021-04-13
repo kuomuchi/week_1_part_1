@@ -111,10 +111,10 @@ app.post('/order/checkout', (req, res) => {
   console.log(req.body)
 })
 
-// TapPay.initialize({
-//   partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
-//   env: 'sandbox'
-// })
+TapPay.initialize({
+  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
+  env: 'sandbox'
+})
 
 // app.post('/order/checkout', async (req, res) => {
 //   const userData = []
@@ -319,61 +319,61 @@ app.get('/image/:id', (req, res) => {
 // 抓取MySQL的資料，抓取page的後6比資料
 function getWebApi (sq, page) {
   return new Promise((resolve, reject) => {
-    const getData = myCache.get('myKey')
+    // const getData = myCache.get('myKey')
     // 如果快存裡面沒有資料，則重新拿獲取資料
-    if (getData === undefined) {
-      console.log('重新撈資料')
-      let web
-      const query = db.query(sq, (err, result) => {
-        if (err) throw err
+    // if (getData === undefined) {
+    console.log('重新撈資料')
+    let web
+    const query = db.query(sq, (err, result) => {
+      if (err) throw err
 
-        web = JSON.parse(JSON.stringify(result))
+      web = JSON.parse(JSON.stringify(result))
 
-        let nextg = 1
-        const allthing = {}
+      let nextg = 1
+      const allthing = {}
 
-        // 將所有資料裡的 string 轉換為 obj
-        for (let i = 0; i < web.length; i++) {
-          if (web[i] == null) break
-          web[i].colors = JSON.parse(web[i].colors)
-          web[i].sizes = JSON.parse(web[i].sizes)
-          web[i].variants = JSON.parse(web[i].variants)
-          web[i].images = JSON.parse(web[i].images)
-        }
+      // 將所有資料裡的 string 轉換為 obj
+      for (let i = 0; i < web.length; i++) {
+        if (web[i] == null) break
+        web[i].colors = JSON.parse(web[i].colors)
+        web[i].sizes = JSON.parse(web[i].sizes)
+        web[i].variants = JSON.parse(web[i].variants)
+        web[i].images = JSON.parse(web[i].images)
+      }
 
-        // 如果第7比資料是null，將不會回將paging的物件。
-        if (web[6] == null) {
-          nextg = 0
-        }
+      // 如果第7比資料是null，將不會回將paging的物件。
+      if (web[6] == null) {
+        nextg = 0
+      }
 
-        if (web.length === 7) {
-          web.pop()
-        }
+      if (web.length === 7) {
+        web.pop()
+      }
 
-        // 因作業需求，新增了一個名為Data的key
-        // 其Value為 MySQl抓下來的所有資料。
+      // 因作業需求，新增了一個名為Data的key
+      // 其Value為 MySQl抓下來的所有資料。
 
-        if (web.length === 1) {
-          allthing.data = web[0]
-        } else {
-          allthing.data = web
-        }
-        if (nextg === 0) {
-          console.log(nextg)
-        } else {
-          allthing.next_paging = +page + 1
-        }
+      if (web.length === 1) {
+        allthing.data = web[0]
+      } else {
+        allthing.data = web
+      }
+      if (nextg === 0) {
+        console.log(nextg)
+      } else {
+        allthing.next_paging = +page + 1
+      }
 
-        // 回傳allthing
+      // 回傳allthing
 
-        myCache.set('myKey', allthing, 10000)
-        resolve(allthing)
-      })
-    } else {
-      console.log('使用快取')
-      const apiData = myCache.get('myKey')
-      resolve(apiData)
-    }
+      myCache.set('myKey', allthing, 10000)
+      resolve(allthing)
+    })
+    // } else {
+    //   console.log('使用快取')
+    //   const apiData = myCache.get('myKey')
+    //   resolve(apiData)
+    // }
   })
 }
 
@@ -595,10 +595,6 @@ app.post('/api/1.0/user/signup', (req, res) => {
 
 app.post('/api/1.0/user/profile', (req, res) => {
   console.log(req.body)
-  console.log('我是分隔線')
-  console.log(req.headers)
-  console.log('我是分隔線')
-  console.log(req.header)
 
   const gettoken = req.body.token
 
@@ -701,6 +697,10 @@ app.post('/product.html', (req, res) => {
 
 app.get('/profile.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/profile.html'))
+})
+
+app.get('/thankyou.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/html/thankyou.html'))
 })
 
 const player = { data: 0 }
