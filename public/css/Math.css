@@ -1,0 +1,85 @@
+.nameBox{
+  width: 300px;
+  height: 130px;
+  text-align: center;
+  border: 3px black solid;
+  position: absolute;
+  top:40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.button{
+  margin-top: 10px;
+  height: 35px;
+  border-top: 2px black solid;
+  background-color: #ccc;
+}
+
+.game{
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 480px;
+  background-color: #bbb;
+}
+
+/* 另外一位敵人 */
+.otherPlayer{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 200px;
+  background-color: white;
+  border: 3px solid #3f3a3a;
+  z-index:1;
+  text-align: center;
+}
+
+#name{
+  font-size: 50px;
+}
+
+#math{
+  font-size: 30px;
+}
+
+.uiBox{
+  width: 500px;
+  height: 150px;
+  background-color: rgb(247, 138, 138);
+  position: absolute;
+  left: 50%;
+  top: 650px;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.ui{
+  margin: 15px;
+}
+
+#awsValue{
+  width: 250px;
+  height: 30px;
+  border: none;
+  outline: none;
+}
+
+#summit, #ready{
+  background-color: red;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  cursor:pointer;
+}
+
+#summit:hover, #ready:hover{
+  background-color: white;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+}

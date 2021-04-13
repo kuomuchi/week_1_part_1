@@ -8,7 +8,6 @@ const mysql = require('mysql') // mysql
 const app = express()
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
 const uuid = require('uuid').v4 // 處理image的東東
-const { get } = require('http')
 
 const jwt = require('jsonwebtoken')
 
@@ -22,7 +21,8 @@ const { resolveCname } = require('dns')
 const axios = require('axios') // 抓取外部的資訊 (for facebook 使用)
 const TapPay = require('tappay-nodejs') // tapPay
 
-// You just need to initilize the config once.
+const NodeCache = require('node-cache') // cache，快取資料的req
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 }) // cache，快取資料的req
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -41,8 +41,6 @@ const upload = multer({ storage })
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/admin', express.static('public'))
-
-// app.set('public engine', 'html');
 
 app.get('/', (req, res) => {
   // res.sendFile(__dirname + '/public/welcome.html');
@@ -321,52 +319,61 @@ app.get('/image/:id', (req, res) => {
 // 抓取MySQL的資料，抓取page的後6比資料
 function getWebApi (sq, page) {
   return new Promise((resolve, reject) => {
-    let web
-    const query = db.query(sq, (err, result) => {
-      if (err) throw err
+    const getData = myCache.get('myKey')
+    // 如果快存裡面沒有資料，則重新拿獲取資料
+    if (getData === undefined) {
+      console.log('重新撈資料')
+      let web
+      const query = db.query(sq, (err, result) => {
+        if (err) throw err
 
-      web = JSON.parse(JSON.stringify(result))
+        web = JSON.parse(JSON.stringify(result))
 
-      console.log(web)
+        let nextg = 1
+        const allthing = {}
 
-      let nextg = 1
-      const allthing = {}
+        // 將所有資料裡的 string 轉換為 obj
+        for (let i = 0; i < web.length; i++) {
+          if (web[i] == null) break
+          web[i].colors = JSON.parse(web[i].colors)
+          web[i].sizes = JSON.parse(web[i].sizes)
+          web[i].variants = JSON.parse(web[i].variants)
+          web[i].images = JSON.parse(web[i].images)
+        }
 
-      // 將所有資料裡的 string 轉換為 obj
-      for (let i = 0; i < web.length; i++) {
-        if (web[i] == null) break
-        web[i].colors = JSON.parse(web[i].colors)
-        web[i].sizes = JSON.parse(web[i].sizes)
-        web[i].variants = JSON.parse(web[i].variants)
-        web[i].images = JSON.parse(web[i].images)
-      }
+        // 如果第7比資料是null，將不會回將paging的物件。
+        if (web[6] == null) {
+          nextg = 0
+        }
 
-      // 如果第7比資料是null，將不會回將paging的物件。
-      if (web[6] == null) {
-        nextg = 0
-      }
+        if (web.length === 7) {
+          web.pop()
+        }
 
-      if (web.length === 7) {
-        web.pop()
-      }
+        // 因作業需求，新增了一個名為Data的key
+        // 其Value為 MySQl抓下來的所有資料。
 
-      // 因作業需求，新增了一個名為Data的key
-      // 其Value為 MySQl抓下來的所有資料。
+        if (web.length === 1) {
+          allthing.data = web[0]
+        } else {
+          allthing.data = web
+        }
+        if (nextg === 0) {
+          console.log(nextg)
+        } else {
+          allthing.next_paging = +page + 1
+        }
 
-      if (web.length === 1) {
-        allthing.data = web[0]
-      } else {
-        allthing.data = web
-      }
-      if (nextg === 0) {
-        console.log(nextg)
-      } else {
-        allthing.next_paging = +page + 1
-      }
+        // 回傳allthing
 
-      // 回傳allthing
-      resolve(allthing)
-    })
+        myCache.set('myKey', allthing, 10000)
+        resolve(allthing)
+      })
+    } else {
+      console.log('使用快取')
+      const apiData = myCache.get('myKey')
+      resolve(apiData)
+    }
   })
 }
 
@@ -504,6 +511,9 @@ app.post('/api/1.0/user/signin', async (req, res) => {
           const token = jwt.sign({ username: email[0].username, email: req.body.email, password: newdata }, process.env.JWT_key, { expiresIn: '3600s' }) // 創造一個jwt
 
           req.headers.authorization = 'Bearer ' + token // 將jwt存入header
+          console.log('測試地點：')
+          console.log(req.headers.authorization)
+          console.log('測試結束！')
 
           // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
 
@@ -584,8 +594,11 @@ app.post('/api/1.0/user/signup', (req, res) => {
 })
 
 app.post('/api/1.0/user/profile', (req, res) => {
+  console.log(req.body)
+  console.log('我是分隔線')
   console.log(req.headers)
-  console.log(req.body.token)
+  console.log('我是分隔線')
+  console.log(req.header)
 
   const gettoken = req.body.token
 
@@ -690,9 +703,55 @@ app.get('/profile.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/profile.html'))
 })
 
-app.get('/thankyou.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/html/thankyou.html'))
+const player = { data: 0 }
+
+app.post('/figthing', (req, res) => {
+  const addPlayer = req.body.data
+
+  player.data += addPlayer
+  if (player.data === 1) {
+    res.send(player)
+  } else if (player.data === 2) {
+    res.send(player)
+  } else {
+    const msg = { data: '人數滿了' }
+    res.send(msg)
+  }
 })
+
+app.get('/mathstart', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/startMath.html'))
+})
+app.get('/figthing', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/math.html'))
+})
+
+app.post('/mathstart', (req, res) => {
+})
+
+///
+
+///
+
+///
+
+///
+
+///
+
+///
+
+///
+
+///
+
+///
+
+///
+
+///
+
+///
 
 // test place
 
