@@ -86,6 +86,11 @@ app.get('/selectusers', (req, res) => {
   })
 })
 
+TapPay.initialize({
+  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
+  env: 'sandbox'
+})
+
 // 這是聆聽3000喔
 app.listen(3000, () => {
   console.log('run on 3000')
@@ -109,11 +114,6 @@ app.post('/admin/checkout.html', (req, res) => {
 app.post('/order/checkout', (req, res) => {
   console.log(req.headers)
   console.log(req.body)
-})
-
-TapPay.initialize({
-  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
-  env: 'sandbox'
 })
 
 // app.post('/order/checkout', async (req, res) => {
