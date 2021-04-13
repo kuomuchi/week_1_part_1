@@ -16,8 +16,6 @@ const xhr = new XMLHttpRequest()
 xhr.open('POST', 'http://3.13.254.132/api/1.0/user/profile', true)
 xhr.setRequestHeader('Content-type', 'application/json')
 
-const getToken = localStorage.getItem('access_token')
-
 xhr.onload = function () {
   if (xhr.readyState === 4) {
     let data = ''

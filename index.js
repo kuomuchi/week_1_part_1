@@ -18,13 +18,15 @@ const {
 
 const { json } = require('body-parser')
 const { resolveCname } = require('dns')
+const NodeCache = require('node-cache')
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 })
 
 const axios = require('axios') // 抓取外部的資訊 (for facebook 使用)
 const TapPay = require('tappay-nodejs') // tapPay
 
 TapPay.initialize({
-  partner_key: process.env.TapPay_key
-  // env: 'sandbox'
+  partner_key: process.env.TapPay_key,
+  env: 'sandbox'
 })
 
 const e = require('express')
@@ -322,53 +324,63 @@ app.get('/image/:id', (req, res) => {
 
 // 抓取MySQL的資料，抓取page的後6比資料
 function getWebApi (sq, page) {
+  const key = ['productList', 'productpage']
+  let keynum = 0
+  if (page === 666) {
+    keynum = 1
+  }
   return new Promise((resolve, reject) => {
-    let web
-    const query = db.query(sq, (err, result) => {
-      if (err) throw err
+    if (myCache.get(key[keynum]) === undefined) {
+      console.log('首次撈資料')
+      let web
+      const query = db.query(sq, (err, result) => {
+        if (err) throw err
 
-      web = JSON.parse(JSON.stringify(result))
+        web = JSON.parse(JSON.stringify(result))
+        let nextg = 1
+        const allthing = {}
 
-      console.log(web)
+        // 將所有資料裡的 string 轉換為 obj
+        for (let i = 0; i < web.length; i++) {
+          if (web[i] == null) break
+          web[i].colors = JSON.parse(web[i].colors)
+          web[i].sizes = JSON.parse(web[i].sizes)
+          web[i].variants = JSON.parse(web[i].variants)
+          web[i].images = JSON.parse(web[i].images)
+        }
 
-      let nextg = 1
-      const allthing = {}
+        // 如果第7比資料是null，將不會回將paging的物件。
+        if (web[6] == null) {
+          nextg = 0
+        }
 
-      // 將所有資料裡的 string 轉換為 obj
-      for (let i = 0; i < web.length; i++) {
-        if (web[i] == null) break
-        web[i].colors = JSON.parse(web[i].colors)
-        web[i].sizes = JSON.parse(web[i].sizes)
-        web[i].variants = JSON.parse(web[i].variants)
-        web[i].images = JSON.parse(web[i].images)
-      }
+        if (web.length === 7) {
+          web.pop()
+        }
 
-      // 如果第7比資料是null，將不會回將paging的物件。
-      if (web[6] == null) {
-        nextg = 0
-      }
+        // 因作業需求，新增了一個名為Data的key
+        // 其Value為 MySQl抓下來的所有資料。
 
-      if (web.length === 7) {
-        web.pop()
-      }
+        if (web.length === 1) {
+          allthing.data = web[0]
+        } else {
+          allthing.data = web
+        }
+        if (nextg === 0) {
+          console.log(nextg)
+        } else {
+          allthing.next_paging = +page + 1
+        }
 
-      // 因作業需求，新增了一個名為Data的key
-      // 其Value為 MySQl抓下來的所有資料。
-
-      if (web.length === 1) {
-        allthing.data = web[0]
-      } else {
-        allthing.data = web
-      }
-      if (nextg === 0) {
-        console.log(nextg)
-      } else {
-        allthing.next_paging = +page + 1
-      }
-
-      // 回傳allthing
-      resolve(allthing)
-    })
+        // 回傳allthing
+        myCache.set(key[keynum], allthing, 10000)
+        resolve(allthing)
+      })
+    } else {
+      console.log('重複的資料')
+      const data = myCache.get(key[keynum])
+      resolve(data)
+    }
   })
 }
 
@@ -392,6 +404,7 @@ app.get('/api/1.0/products/:id', (req, res) => {
 
   if (req.params.id === 'details') {
     sql = `SELECT * FROM product WHERE id = ${id}`
+    fix = 666
   }
 
   getWebApi(sql, fix).then(res.json.bind(res))
