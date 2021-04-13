@@ -115,7 +115,7 @@ app.post('/order/checkout', (req, res) => {
 })
 
 TapPay.initialize({
-  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
+  partner_key: process.env.TapPay_key,
   env: 'sandbox'
 })
 
@@ -505,8 +505,6 @@ app.post('/api/1.0/user/signin', async (req, res) => {
           const token = jwt.sign({ username: email[0].username, email: req.body.email, password: newdata }, process.env.JWT_key, { expiresIn: '3600s' }) // 創造一個jwt
 
           req.headers.authorization = 'Bearer ' + token // 將jwt存入header
-          console.log('測試地點：')
-          console.log(req.headers.authorization)
 
           // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
 
@@ -584,12 +582,6 @@ app.post('/api/1.0/user/signup', (req, res) => {
     }
   })
   console.log('出去signup')
-})
-
-app.get('/test/test', (req, res) => {
-  console.log('this is here')
-  console.log(req.headers)
-  res.send('this is test headers')
 })
 
 app.post('/api/1.0/user/profile', (req, res) => {
