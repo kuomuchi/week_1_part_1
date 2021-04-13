@@ -23,8 +23,8 @@ const axios = require('axios') // 抓取外部的資訊 (for facebook 使用)
 const TapPay = require('tappay-nodejs') // tapPay
 
 TapPay.initialize({
-  partner_key: process.env.TapPay_key,
-  env: 'sandbox'
+  partner_key: process.env.TapPay_key
+  // env: 'sandbox'
 })
 
 const e = require('express')
