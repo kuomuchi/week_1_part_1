@@ -31,7 +31,7 @@
       let userData = JSON.stringify(test); //問題4你!
 
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', "http://localhost:3000/api/1.0/user/signin", true);
+      xhr.open('POST', "http://3.13.254.132/api/1.0/user/signin", true);
       xhr.setRequestHeader('Content-type', 'application/json');
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4 && xhr.status == 200){
@@ -41,7 +41,7 @@
           str = JSON.parse(str);
           window.localStorage.setItem('access_token', str['data']['access_token']);
           alert('登入成功:D')
-          window.location.href = 'http://localhost:3000/'
+          window.location.href = 'http://3.13.254.132/'
         }
       }
       xhr.send(userData);

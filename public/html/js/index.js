@@ -82,7 +82,7 @@ xhr.onreadystatechange = function () {
 }
 
 // 抓取api資料
-xhr.open('GET', 'http://localhost:3000/api/1.0/products/all?paging=1', true)
+xhr.open('GET', 'http://3.13.254.132/api/1.0/products/all?paging=1', true)
 xhr.send()
 
 setTimeout(() => {

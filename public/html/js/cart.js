@@ -245,7 +245,7 @@ document.getElementById('checkout').addEventListener('click', () => {
     console.log(getUserData)
 
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', 'http://localhost:3000/cart.html', true)
+    xhr.open('POST', 'http://3.13.254.132/cart.html', true)
     xhr.setRequestHeader('Content-type', 'application/json')
 
     TPDirect.card.getPrime(function (result) {
@@ -287,7 +287,7 @@ document.getElementById('checkout').addEventListener('click', () => {
         } else {
           localStorage.setItem('oderNumber', str.data)
           alert('你的訂單編號為：' + str.data)
-          window.location.href = 'http://localhost:3000/thankyou.html'
+          window.location.href = 'http://3.13.254.132/thankyou.html'
         }
       }
     }

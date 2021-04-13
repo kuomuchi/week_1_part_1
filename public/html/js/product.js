@@ -157,7 +157,7 @@ xhr.onreadystatechange = function () {
 // 抓取api資料
 const queryParamsString = window.location.search.substr(1).split('id%EF%BC%9D')
 const productId = queryParamsString[1]
-xhr.open('GET', `http://localhost:3000/api/1.0/products/details?id=${productId}`, true)
+xhr.open('GET', `http://3.13.254.132/api/1.0/products/details?id=${productId}`, true)
 xhr.send()
 
 // 將產品加入購物車
@@ -165,7 +165,7 @@ document.getElementById('add-to-cart').addEventListener('click', () => {
   if (productNowSelect[0] !== undefined && productNowSelect[1] !== undefined) {
     const xhrButtone = new XMLHttpRequest()
 
-    xhrButtone.open('POST', 'http://localhost:3000/product.html', true)
+    xhrButtone.open('POST', 'http://3.13.254.132/product.html', true)
     xhrButtone.setRequestHeader('Content-type', 'application/json')
 
     // Product整理資料
