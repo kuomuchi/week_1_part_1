@@ -11,7 +11,6 @@ const uuid = require('uuid').v4 // 處理image的東東
 const { get } = require('http')
 
 const jwt = require('jsonwebtoken')
-
 const {
   createHash
 } = require('crypto') // 跟密碼有關
@@ -28,8 +27,6 @@ TapPay.initialize({
   partner_key: process.env.TapPay_key,
   env: 'sandbox'
 })
-
-const e = require('express')
 
 // You just need to initilize the config once.
 
@@ -191,6 +188,7 @@ app.get('/admin/campaign.html', (req, res) => {
 
 app.post('/admin/campaign.html', upload.single('main'), (req, res) => {
   const local = 'http://3.13.254.132/'
+  console.log(req.body)
 
   const post = { product_id: req.body.product_id, story: req.body.story, picture: local + req.file.destination + '/' + req.file.filename }
   const sql = 'INSERT INTO week_1_part_5 SET ?'
@@ -337,8 +335,8 @@ function getWebApi (sq, page) {
         if (err) throw err
 
         web = JSON.parse(JSON.stringify(result))
-        let nextg = 1
-        const allthing = {}
+        let boolNextPage = 1
+        const sqlData = {}
 
         // 將所有資料裡的 string 轉換為 obj
         for (let i = 0; i < web.length; i++) {
@@ -351,7 +349,7 @@ function getWebApi (sq, page) {
 
         // 如果第7比資料是null，將不會回將paging的物件。
         if (web[6] == null) {
-          nextg = 0
+          boolNextPage = 0
         }
 
         if (web.length === 7) {
@@ -362,19 +360,19 @@ function getWebApi (sq, page) {
         // 其Value為 MySQl抓下來的所有資料。
 
         if (web.length === 1) {
-          allthing.data = web[0]
+          sqlData.data = web[0]
         } else {
-          allthing.data = web
+          sqlData.data = web
         }
-        if (nextg === 0) {
-          console.log(nextg)
+        if (boolNextPage === 0) {
+          console.log(boolNextPage)
         } else {
-          allthing.next_paging = +page + 1
+          sqlData.next_paging = +page + 1
         }
 
-        // 回傳allthing
-        myCache.set(key[keynum], allthing, 10000)
-        resolve(allthing)
+        // 回傳sqlData
+        myCache.set(key[keynum], sqlData, 10000)
+        resolve(sqlData)
       })
     } else {
       console.log('重複的資料')
@@ -409,11 +407,6 @@ app.get('/api/1.0/products/:id', (req, res) => {
 
   getWebApi(sql, fix).then(res.json.bind(res))
 })
-
-/// /登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
-/// /登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
-/// /登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
-/// /登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分////登入的部分
 
 // 從共筆獲得到的function，可以透過此function GET FaceBook的資料
 async function getFacebookUserData (access_token) {
@@ -625,10 +618,6 @@ app.post('/api/1.0/user/profile', (req, res) => {
   res.send(printout)
 })
 
-/// 開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
-/// 開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
-/// 開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端///開始痛苦的前端
-
 app.get('/index.html', (req, res) => {
   console.log('get in')
   res.sendFile(path.join(__dirname, '/public/html/index.html'))
@@ -705,19 +694,37 @@ app.get('/profile.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/profile.html'))
 })
 
-const player = { data: 0 }
+const player = { data: { status: 0, player1: 'nano', player2: 'nano' } }
 
 app.post('/figthing', (req, res) => {
   const addPlayer = req.body.data
+  console.log(req.body)
 
-  player.data += addPlayer
-  if (player.data === 1) {
-    res.send(player)
-  } else if (player.data === 2) {
-    res.send(player)
+  player.data.status += addPlayer
+  if (player.data.status === 1) {
+    player.data.player1 = req.body.name
+    res.send(JSON.stringify(player))
+  } else if (player.data.status === 2) {
+    player.data.player1 = req.body.name
+    res.send(JSON.stringify(player))
   } else {
     const msg = { data: '人數滿了' }
     res.send(msg)
+  }
+})
+
+app.post('/mathstart', (req, res) => {
+  console.log(req.body)
+
+  console.log(player.data.status)
+  console.log('hee')
+
+  if (player.data.status === 1) {
+    console.log('loading')
+    res.send({ data: 'notYet' })
+  } else if (player.data.status === 2) {
+    console.log('start')
+    res.send(player)
   }
 })
 
@@ -727,33 +734,6 @@ app.get('/mathstart', (req, res) => {
 app.get('/figthing', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/math.html'))
 })
-
-app.post('/mathstart', (req, res) => {
-})
-
-///
-
-///
-
-///
-
-///
-
-///
-
-///
-
-///
-
-///
-
-///
-
-///
-
-///
-
-///
 
 // test place
 

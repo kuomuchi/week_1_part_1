@@ -2,19 +2,27 @@
   <title></title>
   <body>
     <h1>Is high noon product</h1>
-    <form action="/admin/campaign.html" method="POST" enctype="multipart/form-data">
 
       <h3>product id</h3>
-      <input type="text" name="product_id" name="id">
+      <input type="text" name="product_id" id="product_id">
       <br>
       <h3>story</h3>
-      <input type="text" name="story" name="id">
+      <input type="text" name="story" id="story">
       <br><br>
       <input type="file" name="main" id="ul">
       <br><br>
 
-      <button>sumit</button>
-    </form>
+      <button onclick="ajax()">sumit</button>
     
+    <script>
+      function ajax(){
+        const formData = {
+        product_id: document.getElementById(product_id).value,
+        story: document.getElementById(story).value,
+        file: document.getElementById(ul).file
+      }
+
+      }
+    </script>
   </body>
 </html>

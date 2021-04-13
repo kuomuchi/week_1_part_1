@@ -1,4 +1,3 @@
-console.log('jeff')
 
 document.getElementById('button').addEventListener('click', () => {
   const catchStorage = window.localStorage.getItem('player')
@@ -21,12 +20,14 @@ document.getElementById('button').addEventListener('click', () => {
           let str = ''
           str = xhr.responseText
           str = JSON.parse(str)
+          console.log(str)
 
           if (str.data === '人數滿了') {
             alert('玩家人數已滿')
           } else {
             alert('你好' + data.name + '歡迎加入:D')
-            window.localStorage.setItem('player', str.data)
+
+            window.localStorage.setItem('player', '' + str.data.status)
             window.location.href = 'http://localhost:3000/mathstart'
           }
 
