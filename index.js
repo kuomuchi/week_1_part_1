@@ -87,8 +87,8 @@ app.get('/selectusers', (req, res) => {
 })
 
 TapPay.initialize({
-  env: 'sandbox',
-  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG'
+  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
+  env: 'sandbox'
 })
 
 // 這是聆聽3000喔
