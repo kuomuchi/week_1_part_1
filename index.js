@@ -8,6 +8,7 @@ const mysql = require('mysql') // mysql
 const app = express()
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
 const uuid = require('uuid').v4 // 處理image的東東
+const { get } = require('http')
 
 const jwt = require('jsonwebtoken')
 
@@ -20,9 +21,9 @@ const { resolveCname } = require('dns')
 
 const axios = require('axios') // 抓取外部的資訊 (for facebook 使用)
 const TapPay = require('tappay-nodejs') // tapPay
+const e = require('express')
 
-const NodeCache = require('node-cache') // cache，快取資料的req
-const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 }) // cache，快取資料的req
+// You just need to initilize the config once.
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -41,6 +42,8 @@ const upload = multer({ storage })
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/admin', express.static('public'))
+
+// app.set('public engine', 'html');
 
 app.get('/', (req, res) => {
   // res.sendFile(__dirname + '/public/welcome.html');
@@ -86,11 +89,6 @@ app.get('/selectusers', (req, res) => {
   })
 })
 
-// TapPay.initialize({
-//   partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
-//   env: 'sandbox'
-// })
-
 // 這是聆聽3000喔
 app.listen(3000, () => {
   console.log('run on 3000')
@@ -116,66 +114,71 @@ app.post('/order/checkout', (req, res) => {
   console.log(req.body)
 })
 
-// app.post('/order/checkout', async (req, res) => {
-//   const userData = []
+TapPay.initialize({
+  partner_key: 'partner_PHgswvYEk4QY6oy3n8X3CwiQCVQmv91ZcFoD5VrkGFXo8N7BFiLUxzeG',
+  env: 'sandbox'
+})
 
-//   userData[0] = req.body.prime
-//   userData[1] = req.body.order
-//   userData[2] = req.body.list
-//   userData[3] = false
+app.post('/order/checkout', async (req, res) => {
+  const userData = []
 
-//   if (userData[0] === undefined) {
-//     userData[0] = 'naaaaa'
-//   }
+  userData[0] = req.body.prime
+  userData[1] = req.body.order
+  userData[2] = req.body.list
+  userData[3] = false
 
-//   for (let i = 1; i < 3; i++) {
-//     if (userData[i] === undefined) {
-//       userData[i] = { code: 'Hi Gan sha li ah' }
-//     }
-//   }
+  if (userData[0] === undefined) {
+    userData[0] = 'naaaaa'
+  }
 
-//   // const paymentInfo = {
-//   //   prime: '99736cfcc83c8af3f69c7ac1670928c29d116330583beeca84b5103432044532',
-//   //   merchant_id: 'AppWorksSchool_CTBC',
-//   //   amount: 1,
-//   //   currency: 'TWD',
-//   //   details: 'An apple and a pen.',
-//   //   cardholder: {
-//   //     phone_number: '+886923456789',
-//   //     name: '王小明',
-//   //     email: 'LittleMing@Wang.com'
-//   //   },
-//   //   remember: true
-//   // }
+  for (let i = 1; i < 3; i++) {
+    if (userData[i] === undefined) {
+      userData[i] = { code: 'Hi Gan sha li ah' }
+    }
+  }
 
-//   TapPay.payByPrime(paymentInfo, async (error, result) => {
-//     if (error) throw error
+  const paymentInfo = {
+    prime: '99736cfcc83c8af3f69c7ac1670928c29d116330583beeca84b5103432044532',
+    merchant_id: 'AppWorksSchool_CTBC',
+    amount: 1,
+    currency: 'TWD',
+    details: 'An apple and a pen.',
+    cardholder: {
+      phone_number: '+886923456789',
+      name: '王小明',
+      email: 'LittleMing@Wang.com'
+    },
+    remember: true
+  }
 
-//     console.log(result)
-//     if (result.msg === 'Success') {
-//       userData[3] = true
-//     }
+  TapPay.payByPrime(paymentInfo, async (error, result) => {
+    if (error) throw error
 
-//     const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
-//     const sql = 'INSERT INTO week_2_part_2 SET ?'
-//     const query = db.query(sql, post, (err, result) => {
-//       if (err) throw err
-//       console.log('丟上mysql')
-//       console.log(result)
-//     })
+    console.log(result)
+    if (result.msg === 'Success') {
+      userData[3] = true
+    }
 
-//     const sq = 'SELECT * FROM week_2_part_2'
-//     // let transResult = "";
-//     const qu = db.query(sq, (err, results) => {
-//       if (err) throw err
+    const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
+    const sql = 'INSERT INTO week_2_part_2 SET ?'
+    const query = db.query(sql, post, (err, result) => {
+      if (err) throw err
+      console.log('丟上mysql')
+      console.log(result)
+    })
 
-//       // transResult = JSON.parse(JSON.stringify(results));
-//       const printf = { data: { number: results.id } }
+    const sq = 'SELECT * FROM week_2_part_2'
+    // let transResult = "";
+    const qu = db.query(sq, (err, results) => {
+      if (err) throw err
 
-//       res.json(printf)
-//     })
-//   })
-// })
+      // transResult = JSON.parse(JSON.stringify(results));
+      const printf = { data: { number: results.id } }
+
+      res.json(printf)
+    })
+  })
+})
 
 // week_1_part_5
 
@@ -319,15 +322,13 @@ app.get('/image/:id', (req, res) => {
 // 抓取MySQL的資料，抓取page的後6比資料
 function getWebApi (sq, page) {
   return new Promise((resolve, reject) => {
-    // const getData = myCache.get('myKey')
-    // 如果快存裡面沒有資料，則重新拿獲取資料
-    // if (getData === undefined) {
-    console.log('重新撈資料')
     let web
     const query = db.query(sq, (err, result) => {
       if (err) throw err
 
       web = JSON.parse(JSON.stringify(result))
+
+      console.log(web)
 
       let nextg = 1
       const allthing = {}
@@ -365,15 +366,8 @@ function getWebApi (sq, page) {
       }
 
       // 回傳allthing
-
-      myCache.set('myKey', allthing, 10000)
       resolve(allthing)
     })
-    // } else {
-    //   console.log('使用快取')
-    //   const apiData = myCache.get('myKey')
-    //   resolve(apiData)
-    // }
   })
 }
 
@@ -513,7 +507,6 @@ app.post('/api/1.0/user/signin', async (req, res) => {
           req.headers.authorization = 'Bearer ' + token // 將jwt存入header
           console.log('測試地點：')
           console.log(req.headers.authorization)
-          console.log('測試結束！')
 
           // const decoded = jwt.verify(token, newdata); //獲取jwt的數值
 
@@ -593,8 +586,15 @@ app.post('/api/1.0/user/signup', (req, res) => {
   console.log('出去signup')
 })
 
+app.get('/test/test', (req, res) => {
+  console.log('this is here')
+  console.log(req.headers)
+  res.send('this is test headers')
+})
+
 app.post('/api/1.0/user/profile', (req, res) => {
-  console.log(req.body)
+  console.log(req.headers)
+  console.log(req.body.token)
 
   const gettoken = req.body.token
 
@@ -697,10 +697,6 @@ app.post('/product.html', (req, res) => {
 
 app.get('/profile.html', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/profile.html'))
-})
-
-app.get('/thankyou.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/html/thankyou.html'))
 })
 
 const player = { data: 0 }
