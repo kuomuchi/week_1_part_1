@@ -8,7 +8,6 @@ const mysql = require('mysql') // mysql
 const app = express()
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
 const uuid = require('uuid').v4 // 處理image的東東
-const { get } = require('http')
 
 const jwt = require('jsonwebtoken')
 
@@ -21,9 +20,9 @@ const { resolveCname } = require('dns')
 
 const axios = require('axios') // 抓取外部的資訊 (for facebook 使用)
 const TapPay = require('tappay-nodejs') // tapPay
-const e = require('express')
 
-// You just need to initilize the config once.
+const NodeCache = require('node-cache') // cache，快取資料的req
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 }) // cache，快取資料的req
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -42,8 +41,6 @@ const upload = multer({ storage })
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/admin', express.static('public'))
-
-// app.set('public engine', 'html');
 
 app.get('/', (req, res) => {
   // res.sendFile(__dirname + '/public/welcome.html');
@@ -119,66 +116,66 @@ TapPay.initialize({
   env: 'sandbox'
 })
 
-app.post('/order/checkout', async (req, res) => {
-  const userData = []
+// app.post('/order/checkout', async (req, res) => {
+//   const userData = []
 
-  userData[0] = req.body.prime
-  userData[1] = req.body.order
-  userData[2] = req.body.list
-  userData[3] = false
+//   userData[0] = req.body.prime
+//   userData[1] = req.body.order
+//   userData[2] = req.body.list
+//   userData[3] = false
 
-  if (userData[0] === undefined) {
-    userData[0] = 'naaaaa'
-  }
+//   if (userData[0] === undefined) {
+//     userData[0] = 'naaaaa'
+//   }
 
-  for (let i = 1; i < 3; i++) {
-    if (userData[i] === undefined) {
-      userData[i] = { code: 'Hi Gan sha li ah' }
-    }
-  }
+//   for (let i = 1; i < 3; i++) {
+//     if (userData[i] === undefined) {
+//       userData[i] = { code: 'Hi Gan sha li ah' }
+//     }
+//   }
 
-  const paymentInfo = {
-    prime: '99736cfcc83c8af3f69c7ac1670928c29d116330583beeca84b5103432044532',
-    merchant_id: 'AppWorksSchool_CTBC',
-    amount: 1,
-    currency: 'TWD',
-    details: 'An apple and a pen.',
-    cardholder: {
-      phone_number: '+886923456789',
-      name: '王小明',
-      email: 'LittleMing@Wang.com'
-    },
-    remember: true
-  }
+//   // const paymentInfo = {
+//   //   prime: '99736cfcc83c8af3f69c7ac1670928c29d116330583beeca84b5103432044532',
+//   //   merchant_id: 'AppWorksSchool_CTBC',
+//   //   amount: 1,
+//   //   currency: 'TWD',
+//   //   details: 'An apple and a pen.',
+//   //   cardholder: {
+//   //     phone_number: '+886923456789',
+//   //     name: '王小明',
+//   //     email: 'LittleMing@Wang.com'
+//   //   },
+//   //   remember: true
+//   // }
 
-  TapPay.payByPrime(paymentInfo, async (error, result) => {
-    if (error) throw error
+//   TapPay.payByPrime(paymentInfo, async (error, result) => {
+//     if (error) throw error
 
-    console.log(result)
-    if (result.msg === 'Success') {
-      userData[3] = true
-    }
+//     console.log(result)
+//     if (result.msg === 'Success') {
+//       userData[3] = true
+//     }
 
-    const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
-    const sql = 'INSERT INTO week_2_part_2 SET ?'
-    const query = db.query(sql, post, (err, result) => {
-      if (err) throw err
-      console.log('丟上mysql')
-      console.log(result)
-    })
+//     const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
+//     const sql = 'INSERT INTO week_2_part_2 SET ?'
+//     const query = db.query(sql, post, (err, result) => {
+//       if (err) throw err
+//       console.log('丟上mysql')
+//       console.log(result)
+//     })
 
-    const sq = 'SELECT * FROM week_2_part_2'
-    // let transResult = "";
-    const qu = db.query(sq, (err, results) => {
-      if (err) throw err
+//     const sq = 'SELECT * FROM week_2_part_2'
+//     // let transResult = "";
+//     const qu = db.query(sq, (err, results) => {
+//       if (err) throw err
 
-      // transResult = JSON.parse(JSON.stringify(results));
-      const printf = { data: { number: results.id } }
+//       // transResult = JSON.parse(JSON.stringify(results));
+//       const printf = { data: { number: results.id } }
 
-      res.json(printf)
-    })
-  })
-})
+//       res.json(printf)
+//     })
+//   })
+// })
 
 // week_1_part_5
 
@@ -322,52 +319,61 @@ app.get('/image/:id', (req, res) => {
 // 抓取MySQL的資料，抓取page的後6比資料
 function getWebApi (sq, page) {
   return new Promise((resolve, reject) => {
-    let web
-    const query = db.query(sq, (err, result) => {
-      if (err) throw err
+    const getData = myCache.get('myKey')
+    // 如果快存裡面沒有資料，則重新拿獲取資料
+    if (getData === undefined) {
+      console.log('重新撈資料')
+      let web
+      const query = db.query(sq, (err, result) => {
+        if (err) throw err
 
-      web = JSON.parse(JSON.stringify(result))
+        web = JSON.parse(JSON.stringify(result))
 
-      console.log(web)
+        let nextg = 1
+        const allthing = {}
 
-      let nextg = 1
-      const allthing = {}
+        // 將所有資料裡的 string 轉換為 obj
+        for (let i = 0; i < web.length; i++) {
+          if (web[i] == null) break
+          web[i].colors = JSON.parse(web[i].colors)
+          web[i].sizes = JSON.parse(web[i].sizes)
+          web[i].variants = JSON.parse(web[i].variants)
+          web[i].images = JSON.parse(web[i].images)
+        }
 
-      // 將所有資料裡的 string 轉換為 obj
-      for (let i = 0; i < web.length; i++) {
-        if (web[i] == null) break
-        web[i].colors = JSON.parse(web[i].colors)
-        web[i].sizes = JSON.parse(web[i].sizes)
-        web[i].variants = JSON.parse(web[i].variants)
-        web[i].images = JSON.parse(web[i].images)
-      }
+        // 如果第7比資料是null，將不會回將paging的物件。
+        if (web[6] == null) {
+          nextg = 0
+        }
 
-      // 如果第7比資料是null，將不會回將paging的物件。
-      if (web[6] == null) {
-        nextg = 0
-      }
+        if (web.length === 7) {
+          web.pop()
+        }
 
-      if (web.length === 7) {
-        web.pop()
-      }
+        // 因作業需求，新增了一個名為Data的key
+        // 其Value為 MySQl抓下來的所有資料。
 
-      // 因作業需求，新增了一個名為Data的key
-      // 其Value為 MySQl抓下來的所有資料。
+        if (web.length === 1) {
+          allthing.data = web[0]
+        } else {
+          allthing.data = web
+        }
+        if (nextg === 0) {
+          console.log(nextg)
+        } else {
+          allthing.next_paging = +page + 1
+        }
 
-      if (web.length === 1) {
-        allthing.data = web[0]
-      } else {
-        allthing.data = web
-      }
-      if (nextg === 0) {
-        console.log(nextg)
-      } else {
-        allthing.next_paging = +page + 1
-      }
+        // 回傳allthing
 
-      // 回傳allthing
-      resolve(allthing)
-    })
+        myCache.set('myKey', allthing, 10000)
+        resolve(allthing)
+      })
+    } else {
+      console.log('使用快取')
+      const apiData = myCache.get('myKey')
+      resolve(apiData)
+    }
   })
 }
 
@@ -592,6 +598,7 @@ app.post('/api/1.0/user/profile', (req, res) => {
   console.log('我是分隔線')
   console.log(req.headers)
   console.log('我是分隔線')
+  console.log(req.header)
 
   const gettoken = req.body.token
 
