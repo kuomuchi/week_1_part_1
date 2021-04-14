@@ -17,7 +17,15 @@ const {
 
 const { json } = require('body-parser')
 const { resolveCname } = require('dns')
-const NodeCache = require('node-cache')
+const NodeCache = require('node-cache') // 快存
+const rateLimit = require('express-rate-limit') // 限制post
+
+const limiter = rateLimit({ // 設定post次數
+  windowMs: 5000, // 1秒
+  max: 3, // limit each IP to 10 requests per windowMs
+  message: '為什麼要ddos呢'
+})
+
 const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 })
 
 const axios = require('axios') // 抓取外部的資訊 (for facebook 使用)
@@ -50,7 +58,7 @@ app.use('/admin', express.static('public'))
 
 // app.set('public engine', 'html');
 
-app.get('/', (req, res) => {
+app.get('/', limiter, (req, res) => {
   // res.sendFile(__dirname + '/public/welcome.html');
   res.sendFile(path.join(__dirname, '/public/html/index.html'))
 })
@@ -630,16 +638,15 @@ app.post('/api/1.0/user/profile', (req, res) => {
   res.send(printout)
 })
 
-app.get('/index.html', (req, res) => {
-  console.log('get in')
+app.get('/index.html', limiter, (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/index.html'))
 })
 
-app.get('/product.html', (req, res) => {
+app.get('/product.html', limiter, (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/product.html'))
 })
 
-app.get('/cart.html', (req, res) => {
+app.get('/cart.html', limiter, (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/cart.html'))
 })
 
@@ -702,7 +709,7 @@ app.post('/product.html', (req, res) => {
   res.send('no thing!!!')
 })
 
-app.get('/profile.html', (req, res) => {
+app.get('/profile.html', limiter, (req, res) => {
   res.sendFile(path.join(__dirname, '/public/html/profile.html'))
 })
 
@@ -745,6 +752,10 @@ app.get('/mathstart', (req, res) => {
 })
 app.get('/figthing', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/math.html'))
+})
+
+app.get('/thankyou.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/html/thankyou.html'))
 })
 
 // test place
