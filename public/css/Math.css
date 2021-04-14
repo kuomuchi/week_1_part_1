@@ -23,7 +23,7 @@
   transform: translate(-50%, -50%);
   width: 800px;
   height: 480px;
-  background-color: #bbb;
+  background-color: white;
 }
 
 /* 另外一位敵人 */
@@ -59,6 +59,7 @@
 }
 
 .ui{
+  opacity: 0;
   margin: 15px;
 }
 
@@ -82,4 +83,11 @@
   margin-left: 50%;
   transform: translateX(-50%);
   width: 70px;
+}
+
+#topic{
+  text-align: center;
+  line-height: 500px;
+  font-size: 40px;
+
 }

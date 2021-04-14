@@ -1,17 +1,19 @@
 <html>
   <link href="/admin/css/Math.css" rel="stylesheet">
   <body>
-    <div class='game'></div>
+    <div id='game' class='game'>
+      <div id="topic">1+1</div>
+    </div>
     <div class='otherPlayer'>
       <div id='name'>還未出現...</div>
       <div id='math'>.....</div>
     </div>
     <div class='uiBox'>
-      <input type="text" id='awsValue' class='ui'>
+      <input type="text" id='ansValue' class='ui'>
       <div id='summit' class='ui'>送出</div>
-      <div id='ready'>準備</div>
     </div>
     
   </body>
+  <script src="/socket.io/socket.io.js"></script>
   <script src="./admin/js/startgame.js"></script>
 </html>

@@ -8,7 +8,7 @@ const mysql = require('mysql') // mysql
 const app = express()
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
 const uuid = require('uuid').v4 // 處理image的東東
-const { get } = require('http')
+const http = require('http')
 
 const jwt = require('jsonwebtoken')
 const {

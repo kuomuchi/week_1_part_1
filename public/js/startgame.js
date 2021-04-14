@@ -1,73 +1,110 @@
-console.log('jeff')
-
-// 遊戲初始化
+const socket = io()
 const player = window.localStorage.getItem('player')
-console.log(player)
+let nowTopic = -1
+let ans
+let playerPoint = 0
 
-if (player === null) {
-  window.location.href = 'http://localhost:3000/figthing'
-  alert('尚未報名..')
-} else if (+player === 1) {
-  console.log('player_1_login')
-  let str = ''
-  // while (str.data !== 'notYet') {
-  setTimeout(() => {
-    console.log('start Loding....')
-    const xhr = new XMLHttpRequest()
-    xhr.open('POST', 'http://localhost:3000/mathstart', true)
-    xhr.setRequestHeader('Content-type', 'application/json')
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        str = xhr.responseText
-        str = JSON.parse(str)
-        console.log(str)
-        if (str.data === 'notYet') {
-          console.log('notyet')
-        } else {
-          if (+player === 1) {
-            document.getElementById('name').textContent = str.data.player2
-          } else if (+player === 2) {
-            document.getElementById('name').textContent = str.data.player1
-          }
-        }
-      }
-    }
-
-    let data = { data: +player }
-    data = JSON.stringify(data)
-    xhr.send(data)
-  }, 1000)
-  // }
-} else if (+player === 2) {
-  console.log('plauer_2_login')
-}
-
-document.getElementById('summit').addEventListener('click', () => {
-  console.log('click')
-})
-
-// 玩家準備
-document.getElementById('ready').addEventListener('click', (event) => {
-  const xhr = new XMLHttpRequest()
-  xhr.open('POST', 'http://localhost:3000/mathstart', true)
-  xhr.setRequestHeader('Content-type', 'application/json')
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      let str = ''
-      str = xhr.responseText
-      str = JSON.parse(str)
-      if (str.data === 'notYet') {
-        console.log('notyet')
-      } else {
-        if (+player === 1) {
-          document.getElementById('name').textContent = str.data.player2
-        } else if (+player === 2) {
-          document.getElementById('name').textContent = str.data.player1
-        }
-      }
+// 遊戲開始
+socket.on('newGame', (msg) => {
+  console.log('start!')
+  document.getElementsByClassName('ui')[0].style.opacity = 1
+  document.getElementsByClassName('ui')[1].style.opacity = 1
+  for (let i = 0; i < 2; i++) {
+    // 確認敵方玩家名稱
+    if (msg[i].id !== +player) {
+      document.getElementById('name').textContent = msg[i].name
+      document.getElementById('game').style.backgroundColor = '#ccc'
     }
   }
-  let data = { data: +player }
-  data = JSON.stringify(data)
-  xhr.send(data)
+  ans = msg[2]
+
+  nowTopic++
+
+  // 準備第一題
+
+  let anstext = ''
+  for (let i = 0; i < ans[nowTopic].length; i++) {
+    anstext += '' + ans[nowTopic][i][0]
+    if (i !== ans[nowTopic].length - 1) {
+      anstext += ' + '
+    }
+  }
+  document.getElementById('topic').textContent = anstext
 })
+
+// 玩家點擊回答按鈕
+document.getElementById('summit').addEventListener('click', (req, res) => {
+  document.getElementById('ansValue').value = ''
+
+  let totalAns = 0
+  const playAns = +document.getElementById('ansValue').value
+  const playerMsg = document.getElementById('ansValue').value
+
+  // 計算答案
+  for (let i = 0; i < ans[nowTopic].length; i++) {
+    totalAns += ans[nowTopic][i][0]
+  }
+
+  if (playAns === totalAns) {
+    playerPoint++
+    textTopic()
+    console.log('目前分數：' + playerPoint)
+  }
+
+  if (nowTopic === 9) {
+    document.getElementById('topic').textContent = '結束！'
+    if (playerPoint > 5) {
+      alert('你贏了！！')
+    } else if (playerPoint > 5) {
+      alert('平手喔:D')
+    } else {
+      alert('嫩')
+    }
+  }
+
+  // 回傳玩家的答案
+  const requests = {
+    id: +player,
+    ans: playerMsg,
+    reply: (playAns === totalAns),
+    ending: (nowTopic === 9)
+  }
+
+  socket.emit('postMsg', requests)
+  console.log(requests)
+})
+
+socket.on('postMsg', (msg) => {
+  if (msg.ending === true) {
+    document.getElementById('topic').textContent = '結束！'
+    if (playerPoint > 5) {
+      alert('你贏了！！')
+    } else if (playerPoint > 5) {
+      alert('平手喔:D')
+    } else {
+      alert('嫩')
+    }
+  } else {
+    if (msg.id !== +player) {
+      document.getElementById('math').textContent = msg.ans
+    }
+    console.log('here')
+    console.log(msg)
+    console.log(msg.reply)
+    if (msg.reply === true) {
+      textTopic()
+    }
+  }
+})
+
+function textTopic () {
+  nowTopic++
+  let anstext = ''
+  for (let i = 0; i < ans[nowTopic].length; i++) {
+    anstext += '' + ans[nowTopic][i][0]
+    if (i !== ans[nowTopic].length - 1) {
+      anstext += ' + '
+    }
+  }
+  document.getElementById('topic').textContent = anstext
+}
