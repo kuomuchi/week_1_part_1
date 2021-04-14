@@ -38,5 +38,31 @@
       <br><br><br>
       <button>summit</button>  
     </form>
+
+    <script>
+
+      const xhr = new XMLHttpRequest();
+      const token = window.localStorage.getItem('access_token')
+      if(token === null){
+        window.location.href = 'http://localhost:3000'
+        alert('還敢進來啊！')
+      }else{
+        console.log(token)
+        xhr.open('GET', "/api/1.0/user/profile", true);
+        xhr.setRequestHeader('authorization', token);
+        xhr.onreadystatechange = function(){
+          if(xhr.readyState == 4 && xhr.status == 200){
+            var str = "";
+            str = xhr.responseText;
+            str = JSON.parse(str);
+            if(str.data === 0){
+              window.location.href = 'http://localhost:3000'
+              alert('還敢進來啊！')
+            }
+          }
+        }
+      }
+      xhr.send();
+    </script>
   </body>
 </html>

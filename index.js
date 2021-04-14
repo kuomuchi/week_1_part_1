@@ -3,7 +3,7 @@ require('dotenv').config()
 const express = require('express')
 const { send, getMaxListeners } = require('process')
 const path = require('path')
-const multer = require('multer')
+const multer = require('multer') // 獲取圖片的部分
 const mysql = require('mysql') // mysql
 const app = express()
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
@@ -335,7 +335,7 @@ function getWebApi (sq, page) {
         if (err) throw err
 
         web = JSON.parse(JSON.stringify(result))
-        let boolNextPage = 1
+        let nextPage = 1
         const sqlData = {}
 
         // 將所有資料裡的 string 轉換為 obj
@@ -349,7 +349,7 @@ function getWebApi (sq, page) {
 
         // 如果第7比資料是null，將不會回將paging的物件。
         if (web[6] == null) {
-          boolNextPage = 0
+          nextPage = 0
         }
 
         if (web.length === 7) {
@@ -364,8 +364,8 @@ function getWebApi (sq, page) {
         } else {
           sqlData.data = web
         }
-        if (boolNextPage === 0) {
-          console.log(boolNextPage)
+        if (nextPage === 0) {
+          console.log(nextPage)
         } else {
           sqlData.next_paging = +page + 1
         }
@@ -589,6 +589,18 @@ app.post('/api/1.0/user/signup', (req, res) => {
     }
   })
   console.log('出去signup')
+})
+
+app.get('/api/1.0/user/profile', (req, res) => {
+  let admin = 0
+  const gettoken = req.headers.authorization
+  const decoded = jwt.verify(gettoken, process.env.JWT_key)
+  console.log(decoded.email)
+  if (decoded.email === 'test') {
+    console.log('is admin')
+    admin = 1
+  }
+  res.send({ data: admin })
 })
 
 app.post('/api/1.0/user/profile', (req, res) => {
