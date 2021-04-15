@@ -1,4 +1,4 @@
-const socket = io('ws://3.13.254.132', { transports: ['websocket'] })
+const socket = io()
 let lobbyFull = 0
 let playerId = -1
 
