@@ -1,23 +1,16 @@
 require('dotenv').config()
 
 const express = require('express')
-const { send, getMaxListeners } = require('process')
 const path = require('path')
-const multer = require('multer') // 獲取圖片的部分
-const mysql = require('mysql') // mysql
 const app = express()
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
-const uuid = require('uuid').v4 // 處理image的東東
 const http = require('http')
-
-const NodeCache = require('node-cache') // 快存
-const rateLimit = require('express-rate-limit') // 限制post
 
 const server = http.createServer(app)
 const io = require('socket.io')(server)
 app.use('/admin', express.static('public'))
 
-server.listen(3000, () => {
+server.listen(8000, () => {
   console.log('start math game')
 })
 

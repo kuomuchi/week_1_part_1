@@ -1,4 +1,5 @@
 require('dotenv').config()
+const { promisify } = require('util')
 
 const express = require('express')
 const { send, getMaxListeners } = require('process')
@@ -70,6 +71,8 @@ const db = mysql.createConnection({
   password: process.env.DB_PWD,
   database: process.env.DB_database
 })
+
+console.log(db)
 
 // connect db is err
 db.connect((err) => {
@@ -760,22 +763,22 @@ app.get('/thankyou.html', (req, res) => {
 
 // test place
 
-app.get('/admin/test.html', (req, res) => {
-  res.sendFile(path.join(__dirname, '/public/test.html'))
-})
+// app.get('/admin/test.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, '/public/test.html'))
+// })
 
-app.post('/admin/test.html', upload.array('main', 3), (req, res) => {
-  // 如果沒有收到圖片:D
-  if (!req.files) {
-    // 你壞壞！
-    res.send('bad')
-  } else {
-    // 你棒棒！！並且回傳圖片的位置。哭啊！
-    // console.log(req.files+" + "+ req.files.length +" + "+ req.files[0].destination);
-    // console.log(req.files)
-    res.json({ upload: req.files })
-  }
-})
+// app.post('/admin/test.html', upload.array('main', 3), (req, res) => {
+//   // 如果沒有收到圖片:D
+//   if (!req.files) {
+//     // 你壞壞！
+//     res.send('bad')
+//   } else {
+//     // 你棒棒！！並且回傳圖片的位置。哭啊！
+//     // console.log(req.files+" + "+ req.files.length +" + "+ req.files[0].destination);
+//     // console.log(req.files)
+//     res.json({ upload: req.files })
+//   }
+// })
 
 // console.log(b.length);
 // res.json(b.length);
@@ -805,15 +808,15 @@ app.post('/admin/test.html', upload.array('main', 3), (req, res) => {
 // });
 
 // 測試用的鮭魚
-// app.get("/addobj", (req, res) => {
-//   const post = { test: "{\"red\" : \"#ff0000\"}" };
-//   const sql = "INSERT INTO salmon SET ?";
-//   const query = db.query(sql, post, (err, result) => {
-//     if (err) throw err;
-//     console.log(result);
-//   });
-//   res.send("add some obj!!!");
-// });
+app.get('/addobj', (req, res) => {
+  const post = { test: '{"red" : "#ff0000"}' }
+  const sql = 'INSERT INTO salmon SET ?'
+  const query = db.query(sql, post, (err, result) => {
+    if (err) throw err
+  })
+  console.log(typeof (query))
+  res.send('add some obj!!!')
+})
 
 // // 查看鮭魚的狀況
 // app.get("/selectsalmon", (req, res) => {
