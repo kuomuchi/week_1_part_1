@@ -10,7 +10,7 @@ const server = http.createServer(app)
 const io = require('socket.io')(server)
 app.use('/admin', express.static('public'))
 
-server.listen(8000, () => {
+server.listen(3000, () => {
   console.log('start math game')
 })
 
