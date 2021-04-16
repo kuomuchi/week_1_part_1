@@ -34,11 +34,10 @@ socket.on('newGame', (msg) => {
 
 // 玩家點擊回答按鈕
 document.getElementById('summit').addEventListener('click', (req, res) => {
-  document.getElementById('ansValue').value = ''
-
   let totalAns = 0
   const playAns = +document.getElementById('ansValue').value
   const playerMsg = document.getElementById('ansValue').value
+  document.getElementById('ansValue').value = ''
 
   // 計算答案
   for (let i = 0; i < ans[nowTopic].length; i++) {

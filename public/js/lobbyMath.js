@@ -33,7 +33,6 @@ document.getElementById('button').addEventListener('click', () => {
         // 稍作等待，並且帶入。
         setTimeout(() => {
           if (lobbyFull === 0) {
-            alert('成功加入遊戲！')
             window.location.href = 'http://3.13.254.132:3000/lobby1'
             window.localStorage.setItem('player', data.id)
           } else {
