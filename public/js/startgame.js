@@ -1,4 +1,4 @@
-const socket = io()
+const socket = io('http://3.13.254.132')
 const player = window.localStorage.getItem('player')
 let nowTopic = -1
 let ans
