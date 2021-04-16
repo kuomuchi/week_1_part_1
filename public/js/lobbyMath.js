@@ -1,4 +1,4 @@
-const socket = io('ws:http://3.13.254.132')
+const socket = io('http://3.13.254.132')
 let lobbyFull = 0
 let playerId = -1
 
