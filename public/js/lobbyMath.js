@@ -1,4 +1,4 @@
-const socket = io('http://3.13.254.132')
+const socket = io('http://localhost:3000')
 let lobbyFull = 0
 let playerId = -1
 
@@ -34,7 +34,7 @@ document.getElementById('button').addEventListener('click', () => {
         setTimeout(() => {
           if (lobbyFull === 0) {
             alert('成功加入遊戲！')
-            window.location.href = 'http://3.13.254.132/lobby1'
+            window.location.href = 'http://localhost:3000/lobby1'
             window.localStorage.setItem('player', data.id)
           } else {
             alert('已滿')

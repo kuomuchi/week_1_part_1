@@ -1,13 +1,16 @@
-require('dotenv').config()
+require('dotenv').config() // env
 
 const express = require('express')
 const path = require('path')
 const app = express()
-const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
+const socketio = require('socket.io')
+
 const http = require('http')
 
 const server = http.createServer(app)
-const io = require('socket.io')(server)
+const io = socketio(server, { cors: { origin: '*' } })
+const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
+
 app.use('/admin', express.static('public'))
 
 server.listen(3000, () => {
