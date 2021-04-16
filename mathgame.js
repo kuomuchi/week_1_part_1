@@ -59,7 +59,9 @@ io.on('connection', (socket) => {
           }
         }
         playLobby.push(topic)
-        socket.broadcast.emit('newGame', playLobby)
+        setTimeout(() => {
+          socket.broadcast.emit('newGame', playLobby)
+        }, 2000)
       }, 1500)
     }
   })
