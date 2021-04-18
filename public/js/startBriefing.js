@@ -25,7 +25,7 @@ socket.on('sendIt', (msg) => {
   setTimeout(() => {
     // 時間到就直接被消失
     outElement.removeChild(newChild)
-  }, 5000)
+  }, 7000)
 
   // 延遲大招:D
   outElement.appendChild(newChild)
