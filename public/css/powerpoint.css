@@ -44,7 +44,7 @@ button:hover{
 .move{
   font-size: 30px;
   /* 15 ~ 750px */
-  left: 100%;
+  left: -50%;
   position: absolute;
   transform: translate(-50%, -50%);
   animation: BarrageAnimation 5s 1 linear;
