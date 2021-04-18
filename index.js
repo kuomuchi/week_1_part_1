@@ -16,8 +16,6 @@ const {
   createHash
 } = require('crypto') // 跟密碼有關
 
-const { json } = require('body-parser')
-const { resolveCname } = require('dns')
 const NodeCache = require('node-cache') // 快存
 const rateLimit = require('express-rate-limit') // 限制post
 
@@ -71,8 +69,6 @@ const db = mysql.createConnection({
   password: process.env.DB_PWD,
   database: process.env.DB_database
 })
-
-console.log(db)
 
 // connect db is err
 db.connect((err) => {

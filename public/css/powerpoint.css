@@ -1,0 +1,57 @@
+input{
+  border-radius: 20px;
+  width: 250px;
+}
+
+button{
+  margin-top: 20px;
+  background: none;
+  border: none;
+  outline: none;
+  background-color: black;
+  color: white;
+  width: 70px;
+}
+
+button:hover{
+  background-color: white;
+  color: black
+}
+
+
+.sendBox{
+  position: absolute;
+  width: 350px;
+  height: 190px;
+  background-color: #ccc;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  top: 40%;
+  left: 50%;
+}
+
+.msgBox{
+  position: absolute;
+  width: 350px;
+  height: 190px;
+  background-color: pink;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  top: 40%;
+  left: 50%;
+}
+
+.move{
+  font-size: 30px;
+  /* 15 ~ 750px */
+  left: 100%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  animation: BarrageAnimation 5s 1 linear;
+}
+
+@keyframes BarrageAnimation
+{
+  from { left: 100%;}
+  to { left: -10%; }
+}

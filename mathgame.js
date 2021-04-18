@@ -12,6 +12,7 @@ const io = socketio(server, { cors: { origin: '*' } })
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
 
 app.use('/admin', express.static('public'))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 server.listen(3000, () => {
   console.log('start math game')
@@ -25,8 +26,22 @@ app.get('/lobby1', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/startMath.html'))
 })
 
-// 開始連線
+// 簡報的部分
+let powerPointUrl = ''
 
+app.get('/briefing', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/PowerPoint/sendBriefing.html'))
+})
+
+app.get('/startBriefing', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/PowerPoint/startBriefing.html'))
+})
+
+app.get('/msgBriefing', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/PowerPoint/sendMsgBriefing.html'))
+})
+
+// 開始socket.io連線
 let playnum = 0
 const playLobby = []
 const topic = []
@@ -68,5 +83,24 @@ io.on('connection', (socket) => {
 
   socket.on('postMsg', (msg) => {
     socket.broadcast.emit('postMsg', msg)
+  })
+
+  // 簡報的部分
+  socket.on('postPowerPoint', (msg) => {
+    powerPointUrl = msg
+    console.log(powerPointUrl)
+  })
+
+  socket.on('getPowerPoint', () => {
+    console.log('someone get ppt')
+    setTimeout(() => {
+      socket.emit('sendppt', powerPointUrl)
+      console.log('send it')
+    }, 500)
+  })
+
+  socket.on('snedmsg', (msg) => {
+    console.log('sendMsgtoWeb')
+    socket.broadcast.emit('sendIt', msg)
   })
 })
