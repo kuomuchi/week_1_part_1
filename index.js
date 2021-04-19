@@ -332,6 +332,7 @@ let erwinnum = 1
 app.get('/image/Erwin', (req, res) => {
   erwinnum++
   const num = erwinnum % 2
+  console.log(erwin[num])
   res.sendFile(path.join(__dirname, '/image/', erwin[num]))
 })
 
