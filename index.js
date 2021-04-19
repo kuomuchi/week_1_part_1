@@ -334,7 +334,7 @@ app.get('/Erwin/great', (req, res) => {
   erwinnum++
   const num = erwinnum % 2
   console.log(erwin[num])
-  res.sendFile(path.join(__dirname, '/image/', erwin[num]))
+  res.sendFile(path.join(__dirname, '/image/', 'Tian.jpeg'))
 })
 
 // 抓取MySQL的資料，抓取page的後6比資料
