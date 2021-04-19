@@ -329,7 +329,7 @@ app.get('/image/:id', (req, res) => {
 
 const erwin = ['Tian.jpeg', 'nice.jpg']
 let erwinnum = 1
-app.get('/image/Erwin', (req, res) => {
+app.get('/image/Erwin/great', (req, res) => {
   erwinnum++
   const num = erwinnum % 2
   console.log(erwin[num])
