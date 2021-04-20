@@ -845,10 +845,6 @@ app.get('/api/1.0/order/payments', (req, res) => {
       const nowId = +transResult[i].user_id
       userData.data[nowId - 1].user_id = +transResult[i].user_id
       userData.data[nowId - 1].total_payment += +transResult[nowId].total
-      if (nowId === 1) {
-        console.log(typeof (newId))
-        console.log(typeof (userData.data[nowId - 1].total_payment))
-      }
     }
     res.send(userData)
   })
