@@ -342,7 +342,7 @@ function getWebApi (sq, page) {
   const key = ['productList', 'productpage']
   let keynum = 0
   if (page === 666) {
-    keynum = 1
+    keynum = 0
   }
   return new Promise((resolve, reject) => {
     if (myCache.get(key[keynum]) === undefined) {
