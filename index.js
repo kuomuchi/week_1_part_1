@@ -1,23 +1,58 @@
-require('dotenv').config()
-const { promisify } = require('util')
+require('dotenv').config() // 隱藏檔案.env
+
+const { promisify } = require('util') // node.js 工具
 
 const express = require('express')
-const { send, getMaxListeners } = require('process')
-const path = require('path')
-const multer = require('multer') // 獲取圖片的部分
+
+// 基礎架設server
 const mysql = require('mysql') // mysql
 const app = express()
 const bodyParser = require('body-parser') // 處理post出來的body，讓req.body可以跑出資料。
-const uuid = require('uuid').v4 // 處理image的東東
-const http = require('http')
+const aws = require('aws-sdk')
 
-const jwt = require('jsonwebtoken')
-const {
-  createHash
-} = require('crypto') // 跟密碼有關
+// 檔案處理工具
+const uuid = require('uuid').v4 // 處理image的東東
+const multer = require('multer') // 獲取圖片的部分
+const path = require('path') //  整理檔案，指定檔案
+const multerS3 = require('multer-s3') // multer在aws 上使用S3
+aws.config.update({ // 設置基本資料
+  accessKeyId: process.env.AWS_image_id,
+  secretAccessKey: process.env.AWS_image_key,
+  region: 'us-east-2'
+})
+
+const s3 = new aws.S3()
+
+const storage = multer.diskStorage({ // 圖片歸檔設定
+  destination: function (req, file, cd) {
+    cd(null, 'image')
+  },
+  filename: function (req, file, cb) {
+    const { originalname } = file
+    cb(null, originalname)
+  }
+})
+
+const upload = multer({ storage })
+
+const awsUpload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'bucket-name',
+    key: function (req, file, cb) {
+      console.log(file)
+      cb(null, file.originalname) // use Date.now() for unique file keys
+    }
+  })
+})
+
+const jwt = require('jsonwebtoken') // 製作前端加密 token
+
+const { createHash } = require('crypto') // 引入密碼
 
 const NodeCache = require('node-cache') // 快存
-const rateLimit = require('express-rate-limit') // 限制post
+
+const rateLimit = require('express-rate-limit') // 引入「限制post次數」
 
 const limiter = rateLimit({ // 設定post次數
   windowMs: 5000, // 1秒
@@ -40,20 +75,9 @@ TapPay.initialize({
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cd) {
-    cd(null, 'image')
-  },
-  filename: function (req, file, cb) {
-    const { originalname } = file
-    cb(null, originalname)
-  }
-})
+app.use(bodyParser.urlencoded({ extended: false })) // 使用body-parser，讓req.body的回傳值不會是undefined
 
-const upload = multer({ storage })
-
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use('/admin', express.static('public'))
+app.use('/admin', express.static('public')) // 可以以「/admin」為前提在，public裡獲取資料。
 
 // app.set('public engine', 'html');
 
@@ -773,22 +797,22 @@ app.get('/thankyou.html', (req, res) => {
 
 // test place
 
-// app.get('/admin/test.html', (req, res) => {
-//   res.sendFile(path.join(__dirname, '/public/test.html'))
-// })
+app.get('/admin/test.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/test.html'))
+})
 
-// app.post('/admin/test.html', upload.array('main', 3), (req, res) => {
-//   // 如果沒有收到圖片:D
-//   if (!req.files) {
-//     // 你壞壞！
-//     res.send('bad')
-//   } else {
-//     // 你棒棒！！並且回傳圖片的位置。哭啊！
-//     // console.log(req.files+" + "+ req.files.length +" + "+ req.files[0].destination);
-//     // console.log(req.files)
-//     res.json({ upload: req.files })
-//   }
-// })
+app.post('/admin/test.html', awsUpload.array('main', 3), (req, res) => {
+  // 如果沒有收到圖片:D
+  if (!req.files) {
+    console.log('no-image')
+    res.send('bad')
+  } else {
+    // 你棒棒！！並且回傳圖片的位置。哭啊！
+    // console.log(req.files+" + "+ req.files.length +" + "+ req.files[0].destination);
+    console.log(req.files)
+    res.json({ upload: req.files })
+  }
+})
 
 // console.log(b.length);
 // res.json(b.length);
@@ -817,16 +841,16 @@ app.get('/thankyou.html', (req, res) => {
 //   aa(sql).then(res.json.bind(res));
 // });
 
-// 測試用的鮭魚
-app.get('/addobj', (req, res) => {
-  const post = { test: '{"red" : "#ff0000"}' }
-  const sql = 'INSERT INTO salmon SET ?'
-  const query = db.query(sql, post, (err, result) => {
-    if (err) throw err
-  })
-  console.log(typeof (query))
-  res.send('add some obj!!!')
-})
+// // 測試用的鮭魚
+// app.get('/addobj', (req, res) => {
+//   const post = { test: '{"red" : "#ff0000"}' }
+//   const sql = 'INSERT INTO salmon SET ?'
+//   const query = db.query(sql, post, (err, result) => {
+//     if (err) throw err
+//   })
+//   console.log(typeof (query))
+//   res.send('add some obj!!!')
+// })
 
 // // 查看鮭魚的狀況
 // app.get("/selectsalmon", (req, res) => {
