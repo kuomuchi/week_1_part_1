@@ -38,7 +38,7 @@ const upload = multer({ storage })
 const awsUpload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: 'bucket-name',
+    bucket: 'appworkschool-image',
     key: function (req, file, cb) {
       console.log(file)
       cb(null, file.originalname) // use Date.now() for unique file keys
