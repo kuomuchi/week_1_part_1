@@ -832,11 +832,11 @@ app.get('/api/1.0/order/payments', (req, res) => {
 
     const userData = {
       data: [
-        { user_id: 0 },
-        { user_id: 0 },
-        { user_id: 0 },
-        { user_id: 0 },
-        { user_id: 0 }
+        { user_id: 0, total_payment: 0 },
+        { user_id: 0, total_payment: 0 },
+        { user_id: 0, total_payment: 0 },
+        { user_id: 0, total_payment: 0 },
+        { user_id: 0, total_payment: 0 }
       ]
     }
 
