@@ -802,6 +802,7 @@ app.get('/admin/test.html', (req, res) => {
 })
 
 app.post('/admin/test.html', awsUpload.array('main', 3), (req, res) => {
+  console.log('getIn')
   // 如果沒有收到圖片:D
   if (!req.files) {
     console.log('no-image')
