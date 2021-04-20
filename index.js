@@ -841,10 +841,10 @@ app.get('/api/1.0/order/payments', (req, res) => {
     }
 
     transResult = JSON.parse(JSON.stringify(results))
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 4999; i++) {
       const nowId = +transResult[i].user_id
       userData.data[nowId - 1].user_id = +transResult[i].user_id
-      userData.data[nowId - 1].total_payment += transResult[i].total
+      userData.data[nowId - 1].total_payment += +transResult[i].total
     }
     res.send(userData)
   })
