@@ -342,10 +342,10 @@ function getWebApi (sq, page) {
   const key = ['productList', 'productpage']
   let keynum = 0
   if (page === 666) {
-    keynum = 0
+    keynum = 1
   }
   return new Promise((resolve, reject) => {
-    if (myCache.get(key[keynum]) === undefined) {
+    if (myCache.get(key[0]) === undefined || keynum === 1) {
       console.log('首次撈資料')
       let web
       const query = db.query(sq, (err, result) => {
@@ -388,8 +388,12 @@ function getWebApi (sq, page) {
         }
 
         // 回傳sqlData
-        myCache.set(key[keynum], sqlData, 10000)
-        resolve(sqlData)
+        if (keynum === 1) {
+          resolve(sqlData)
+        } else {
+          myCache.set(key[keynum], sqlData, 10000)
+          resolve(sqlData)
+        }
       })
     } else {
       console.log('重複的資料')
