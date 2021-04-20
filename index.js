@@ -364,7 +364,6 @@ function getWebApi (sq, page) {
   }
   return new Promise((resolve, reject) => {
     if (myCache.get(key[0]) === undefined || keynum === 1) {
-      console.log('首次撈資料')
       let web
       db.query(sq, (err, result) => {
         if (err) throw err
@@ -409,6 +408,7 @@ function getWebApi (sq, page) {
         if (keynum === 1) {
           resolve(sqlData)
         } else {
+          console.log('首次撈資料')
           myCache.set(key[keynum], sqlData, 10000)
           resolve(sqlData)
         }
