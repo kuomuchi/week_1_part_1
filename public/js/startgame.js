@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000')
+const socket = io('https://woyaozousini.site')
 const player = window.localStorage.getItem('player')
 let nowTopic = -1
 let ans

@@ -194,7 +194,7 @@ app.get('/admin/campaign.html', (req, res) => {
 })
 
 app.post('/admin/campaign.html', upload.single('main'), (req, res) => {
-  const local = 'http://3.13.254.132/'
+  const local = 'https://woyaozousini.site/'
   console.log(req.body)
 
   const post = { product_id: req.body.product_id, story: req.body.story, picture: local + req.file.destination + '/' + req.file.filename }
@@ -225,7 +225,7 @@ app.get('/api/1.0/marketing/campaigns', (req, res) => {
 // in product there, when post! and.....do soemthing!
 // 當在「product.html」收到post時。
 app.post('/admin/product.html', upload.array('main_image', 4), (req, res) => {
-  const local = 'http://3.13.254.132/'
+  const local = 'woyaozousini.site'
 
   // get all post req, and make a array
   // 取得所有的input post結果

@@ -1,4 +1,4 @@
-const socket = io('http://3.13.254.132')
+const socket = io('https://woyaozousini.site')
 
 console.log('sendIt')
 

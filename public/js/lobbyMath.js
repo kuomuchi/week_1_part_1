@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000')
+const socket = io('https://woyaozousini.site')
 let lobbyFull = 0
 let playerId = -1
 
@@ -33,7 +33,7 @@ document.getElementById('button').addEventListener('click', () => {
         // 稍作等待，並且帶入。
         setTimeout(() => {
           if (lobbyFull === 0) {
-            window.location.href = 'http://localhost:3000/lobby1'
+            window.location.href = 'https://woyaozousini.site/lobby1'
             window.localStorage.setItem('player', data.id)
           } else {
             alert('已滿')
