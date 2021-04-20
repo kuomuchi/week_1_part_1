@@ -809,6 +809,47 @@ app.post('/admin/test.html', awsUpload.array('main', 3), (req, res) => {
   }
 })
 
+app.get('/iwantmore', (req, res) => {
+  db.connect()
+  for (let i = 0; i < 4999; i++) {
+    const id = Math.floor(Math.random() * 5) + 1
+    const total = Math.floor(Math.random() * 1000) + 1
+    const post = { user_id: id, total: total }
+    const sql = 'INSERT INTO testdata SET ?'
+    db.query(sql, post, (err, result) => {
+      if (err) throw err
+    })
+  }
+  res.send('ya')
+  db.end()
+})
+
+app.get('/api/1.0/order/payments', (req, res) => {
+  const sql = 'SELECT * FROM testdata'
+  let transResult = ''
+  db.query(sql, (err, results) => {
+    if (err) throw err
+
+    const userData = {
+      data: [
+        { user_id: 0 },
+        { user_id: 0 },
+        { user_id: 0 },
+        { user_id: 0 },
+        { user_id: 0 }
+      ]
+    }
+
+    transResult = JSON.parse(JSON.stringify(results))
+    for (let i = 0; i < 1000; i++) {
+      const nowId = +transResult[i].user_id
+      userData.data[nowId - 1].user_id = +transResult[i].user_id
+      userData.data[nowId - 1].total_payment += transResult[i].total
+    }
+    res.send(userData)
+  })
+})
+
 // console.log(b.length);
 // res.json(b.length);
 // console.log(b.length);
@@ -836,7 +877,7 @@ app.post('/admin/test.html', awsUpload.array('main', 3), (req, res) => {
 //   aa(sql).then(res.json.bind(res));
 // });
 
-// // 測試用的鮭魚
+// // // 測試用的鮭魚
 // app.get('/addobj', (req, res) => {
 //   const post = { test: '{"red" : "#ff0000"}' }
 //   const sql = 'INSERT INTO salmon SET ?'
