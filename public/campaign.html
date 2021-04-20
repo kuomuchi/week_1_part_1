@@ -20,7 +20,7 @@
       const xhr = new XMLHttpRequest();
       const token = window.localStorage.getItem('access_token')
       if(token === null){
-        window.location.href = 'http://3.13.254.132'
+        window.location.href = 'http://woyaozousini.site/'
         alert('還敢進來啊！')
       }else{
         console.log(token)
@@ -32,7 +32,7 @@
             str = xhr.responseText;
             str = JSON.parse(str);
             if(str.data === 0){
-              window.location.href = 'http://3.13.254.132'
+              window.location.href = 'http://woyaozousini.site/'
               alert('還敢進來啊！')
             }
           }
