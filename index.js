@@ -39,7 +39,7 @@ const awsUpload = multer({
   storage: multerS3({
     s3: s3,
     bucket: 'appworkschool-image',
-    contentType: multerS3.AUTO_CONTENT_TYPE,
+    contentType: multerS3.AUTO_CONTENT_TYPE, // 最棒的東西！自動偵測檔案的副檔名
     key: function (req, file, cb) {
       console.log(file)
       cb(null, file.originalname) // use Date.now() for unique file keys
@@ -92,37 +92,30 @@ const db = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PWD,
-  database: process.env.DB_database
+  database: process.env.DB_database,
+  waitForConnections: true,
+  connectionLimit: 10
 })
 
 // connect db is err
-db.connect((err) => {
-  if (err) {
-    throw err
-  }
-})
-
-// 透過api新增資料
-app.get('/adduser1', (req, res) => {
-  const post = { title: 'test', description: 'testtest', price: '100', texture: 'sklky', wash: 'very hard', place: 'who know?', note: 'this is so hard!', story: 'NO!', colors: '{"red": "#ff0000"}', sizes: '{"size": "M"}', variants: '{"variants": "null"}', main_image: 'image', images: '{"desk1": "image"}', categories: 'accessories' }
-  const sql = 'INSERT INTO product SET ?'
-  const query = db.query(sql, post, (err, result) => {
-    if (err) throw err
-    console.log(result)
-  })
-  res.send('add a product')
-})
+// db.connect((err) => {
+//   if (err) {
+//     throw err
+//   }
+// })
 
 // 搜尋product這個table 裡面的所有資料
 app.get('/selectusers', (req, res) => {
   const sql = 'SELECT * FROM product'
   let transResult = ''
-  const query = db.query(sql, (err, results) => {
-    if (err) throw err
+
+  db.query(sql, (error, results) => {
+    // db.connect()
+    // db.end()
+    if (error) throw error
     transResult = JSON.parse(JSON.stringify(results))
-    console.log(results)
-    console.log(transResult.length)
-    res.json('select...')
+    console.log(transResult)
+    res.send('select...')
   })
 })
 
@@ -193,7 +186,7 @@ app.post('/order/checkout', async (req, res) => {
 
     const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
     const sql = 'INSERT INTO week_2_part_2 SET ?'
-    const query = db.query(sql, post, (err, result) => {
+    db.query(sql, post, (err, result) => {
       if (err) throw err
       console.log('丟上mysql')
       console.log(result)
@@ -201,7 +194,7 @@ app.post('/order/checkout', async (req, res) => {
 
     const sq = 'SELECT * FROM week_2_part_2'
     // let transResult = "";
-    const qu = db.query(sq, (err, results) => {
+    db.query(sq, (err, results) => {
       if (err) throw err
 
       // transResult = JSON.parse(JSON.stringify(results));
@@ -224,7 +217,7 @@ app.post('/admin/campaign.html', upload.single('main'), (req, res) => {
 
   const post = { product_id: req.body.product_id, story: req.body.story, picture: local + req.file.destination + '/' + req.file.filename }
   const sql = 'INSERT INTO week_1_part_5 SET ?'
-  const query = db.query(sql, post, (err, result) => {
+  db.query(sql, post, (err, result) => {
     if (err) throw err
     console.log(result)
     res.send('nice')
@@ -234,7 +227,7 @@ app.post('/admin/campaign.html', upload.single('main'), (req, res) => {
 app.get('/api/1.0/marketing/campaigns', (req, res) => {
   const sql = 'SELECT * FROM week_1_part_5'
   let transResult = ''
-  const query = db.query(sql, (err, results) => {
+  db.query(sql, (err, results) => {
     if (err) throw err
     transResult = JSON.parse(JSON.stringify(results))
     console.log(results)
@@ -335,7 +328,7 @@ app.post('/admin/product.html', upload.array('main_image', 4), (req, res) => {
 
   const post = { title: req.body.title, description: allpostdata[1], price: allpostdata[2], texture: allpostdata[3], wash: allpostdata[4], place: allpostdata[5], note: allpostdata[6], story: allpostdata[7], colors: `${JSON.stringify(postcolor)}`, sizes: `${JSON.stringify(postsize)}`, variants: `${JSON.stringify(chld)}`, main_image: local + req.files[0].destination + '/' + req.files[0].filename, images: `${JSON.stringify(allimage)}`, categories: req.body.selec }
   const sql = 'INSERT INTO product SET ?'
-  const query = db.query(sql, post, (err, result) => {
+  db.query(sql, post, (err, result) => {
     if (err) throw err
     console.log(result)
   })
@@ -373,7 +366,7 @@ function getWebApi (sq, page) {
     if (myCache.get(key[0]) === undefined || keynum === 1) {
       console.log('首次撈資料')
       let web
-      const query = db.query(sq, (err, result) => {
+      db.query(sq, (err, result) => {
         if (err) throw err
 
         web = JSON.parse(JSON.stringify(result))
@@ -596,13 +589,13 @@ app.post('/api/1.0/user/signup', (req, res) => {
   selectuser(sql).then((email) => {
     // 沒有重複的話，直接註冊7小時。
 
-    if (email == '') {
+    if (email === '') {
       console.log('keep')
       addpass(user[2]).then((data) => {
         const newdata = data
         const post = { username: user[0], email: user[1], password: newdata }
         const sql = 'INSERT INTO account SET ?'
-        const query = db.query(sql, post, (err, result) => {
+        db.query(sql, post, (err, result) => {
           if (err) throw err
 
           const token = jwt.sign(post, process.env.JWT_key, { expiresIn: '3600s' }) // 創造一個jwt
@@ -723,14 +716,14 @@ app.post('/cart.html', (req, res) => {
     } else {
       const post = { prime: uderData.prime, oder: `${JSON.stringify(paymentInfo)}`, list: `${JSON.stringify(uderData.product)}`, pay: `${uderData.pay}` }
       const sql = 'INSERT INTO week_2_part_2 SET ?'
-      const query = db.query(sql, post, (err, result) => {
+      db.query(sql, post, (err, result) => {
         if (err) throw err
         console.log('丟上mysql')
       })
 
       const sq = 'SELECT * FROM week_2_part_2'
       // let transResult = "";
-      const qu = db.query(sq, (err, results) => {
+      db.query(sq, (err, results) => {
         if (err) throw err
 
         const transResult = JSON.parse(JSON.stringify(results))
