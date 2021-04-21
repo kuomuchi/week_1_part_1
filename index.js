@@ -815,7 +815,7 @@ app.get('/iwantmore', (req, res) => {
     const id = Math.floor(Math.random() * 5) + 1
     const total = Math.floor(Math.random() * 1000) + 1
     const post = { user_id: id, total: total }
-    const sql = 'INSERT INTO testdata SET ?'
+    const sql = 'INSERT INTO test SET ?'
     db.query(sql, post, (err, result) => {
       if (err) throw err
     })
@@ -825,7 +825,7 @@ app.get('/iwantmore', (req, res) => {
 })
 
 app.get('/api/1.0/order/payments', (req, res) => {
-  const sql = 'SELECT * FROM testdata'
+  const sql = 'SELECT * FROM test'
   let transResult = ''
   db.query(sql, (err, results) => {
     if (err) throw err
@@ -841,7 +841,8 @@ app.get('/api/1.0/order/payments', (req, res) => {
     }
 
     transResult = JSON.parse(JSON.stringify(results))
-    for (let i = 0; i < 4999; i++) {
+    console.log(transResult.length)
+    for (let i = 0; i < transResult.length; i++) {
       const nowId = +transResult[i].user_id
       userData.data[nowId - 1].user_id = +transResult[i].user_id
       userData.data[nowId - 1].total_payment += +transResult[nowId].total
