@@ -471,18 +471,9 @@ async function addpass (password) {
 // 判斷email的部分。
 function selectuser (sql) {
   return new Promise((resolve, reject) => {
-    const query = db.query(sql, (err, result) => {
+    db.query(sql, (err, result) => {
       if (err) throw err
-
-      let jg = false
       const transResult = result
-
-      if (result !== '') {
-        jg = true
-      }
-      // b[1] = jg
-
-      // b = JSON.parse(JSON.stringify(result));
 
       resolve(transResult)
     })

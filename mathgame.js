@@ -41,10 +41,15 @@ app.get('/msgBriefing', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/PowerPoint/sendMsgBriefing.html'))
 })
 
+app.get('/boom', (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/boomGame.html'))
+})
+
 // 開始socket.io連線
 let playnum = 0
 const playLobby = []
 const topic = []
+let boomplayer = 0
 
 io.on('connection', (socket) => {
   console.log('a user connected')
@@ -85,6 +90,7 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('postMsg', msg)
   })
 
+  //
   // 簡報的部分
   socket.on('postPowerPoint', (msg) => {
     powerPointUrl = msg
@@ -102,5 +108,12 @@ io.on('connection', (socket) => {
   socket.on('snedmsg', (msg) => {
     console.log('sendMsgtoWeb')
     socket.broadcast.emit('sendIt', msg)
+  })
+
+  //
+  // boomGame的部分
+  socket.on('boomAdd', () => {
+    boomplayer++
+    socket.emit('createId', boomplayer)
   })
 })
