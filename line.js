@@ -35,7 +35,7 @@ setTimeout(function () {
   bot.push('U813645541c262fb6d9c967efeb884aeb', '啟動了！')
 }, 0)
 
-bot.listen(3001, function () {
+app.listen(3001, function () {
   console.log('[BOT已準備就緒]')
 })
 
