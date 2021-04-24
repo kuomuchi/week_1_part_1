@@ -1,3 +1,4 @@
+require('dotenv').config() // 隱藏檔案.env
 const linebot = require('linebot')
 const express = require('express')
 
@@ -13,7 +14,7 @@ const signature = crypto
 const bot = linebot({
   channelId: process.env.CHANNEL_ID,
   channelSecret: process.env.CHANNEL_SECRET,
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN
+  channelAccessToken: process.env.CHANNEL_SECRET
 })
 
 const app = express()
@@ -43,7 +44,7 @@ setTimeout(function () {
   bot.push('U813645541c262fb6d9c967efeb884aeb', '啟動了！')
 }, 0)
 
-bot.listen('/hook', 3001, function () {
+bot.listen(3001, function () {
   console.log('[BOT已準備就緒]')
 })
 
