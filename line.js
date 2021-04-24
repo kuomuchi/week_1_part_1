@@ -1,6 +1,15 @@
 const linebot = require('linebot')
 const express = require('express')
 
+const crypto = require('crypto')
+
+const channelSecret = '...' // Channel secret string
+const body = '...' // Request body string
+const signature = crypto
+  .createHmac('SHA256', channelSecret)
+  .update(body).digest('base64')
+// Compare x-line-signature request header and the signature
+
 const bot = linebot({
   channelId: process.env.CHANNEL_ID,
   channelSecret: process.env.CHANNEL_SECRET,
