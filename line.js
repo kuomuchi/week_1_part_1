@@ -24,6 +24,20 @@ app.get('/', function (req, res) {
   res.send('Hello World!')
 })
 
+
+bot.on('message', function (event) {
+  if(event.message.text){
+    event.reply("yaaa" ).then(function (data) {
+      console.log('Success', data);
+    }).catch(function (error) {
+      console.log('Error', error);
+    });
+  }
+}
+
+
+
+
 setTimeout(function () {
   bot.push('U813645541c262fb6d9c967efeb884aeb', '啟動了！')
 }, 0)
