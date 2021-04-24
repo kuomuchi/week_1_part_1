@@ -97,15 +97,6 @@ const db = mysql.createConnection({
   connectionLimit: 10
 })
 
-// connect db is err
-// db.connect((err) => {
-//   if (err) {
-//     throw err
-//   }
-// })
-
-// 搜尋product這個table 裡面的所有資料
-
 // 設定 webhook
 app.post('/hook', (req, res) => {
   console.log(req.body) // Call your action on the request here
