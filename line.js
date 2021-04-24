@@ -19,6 +19,10 @@ setTimeout(function () {
   bot.push('U813645541c262fb6d9c967efeb884aeb', '啟動了！')
 }, 0)
 
+app.listen(3001, () => {
+  console.log('LineBot is running.')
+})
+
 bot.on('follow', function (event) {
   event.reply('你好！謝謝你加我好友 :D')
   bot.push(me, '有人加我好友耶！\n我的朋友有一天會比你多的 >:D')
