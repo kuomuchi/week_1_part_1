@@ -2,15 +2,6 @@ require('dotenv').config() // 隱藏檔案.env
 const linebot = require('linebot')
 const express = require('express')
 
-const crypto = require('crypto')
-
-const channelSecret = '...' // Channel secret string
-const body = '...' // Request body string
-const signature = crypto
-  .createHmac('SHA256', channelSecret)
-  .update(body).digest('base64')
-// Compare x-line-signature request header and the signature
-
 const bot = linebot({
   channelId: process.env.CHANNEL_ID,
   channelSecret: process.env.CHANNEL_SECRET,
@@ -31,13 +22,13 @@ app.post('/hook', (req, res) => {
 })
 
 bot.on('message', function (event) {
-  if (event.message.text) {
-    event.reply('yaaa').then(function (data) {
-      console.log('Success', data)
-    }).catch(function (error) {
-      console.log('Error', error)
-    })
-  }
+  // event.message.text是使用者傳給bot的訊息
+  // 使用event.reply(要回傳的訊息)方法可將訊息回傳給使用者
+  event.reply(event.message.text).then(function (data) {
+    console.log(data)
+  }).catch(err => {
+    console.log(err)
+  })
 })
 
 setTimeout(function () {
