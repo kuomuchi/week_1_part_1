@@ -49,7 +49,24 @@ app.get('/boom', (req, res) => {
 let playnum = 0
 const playLobby = []
 const topic = []
+
+// boom變數
 let boomplayer = 0
+const boomMap = []
+const reloadMap = (bMap, position) => {
+  let isFix = 0
+  for (let i = 0; i < bMap.length; i++) {
+    if (bMap[i].id === position.id) {
+      bMap[i].X = position.X
+      bMap[i].Y = position.Y
+      isFix = 1
+    }
+  }
+  if (isFix === 0) {
+    bMap.push(position)
+  }
+  return bMap
+}
 
 io.on('connection', (socket) => {
   console.log('a user connected')
@@ -114,6 +131,17 @@ io.on('connection', (socket) => {
   // boomGame的部分
   socket.on('boomAdd', () => {
     boomplayer++
-    socket.emit('createId', boomplayer)
+    socket.emit('createId', { id: boomplayer, position: boomMap })
+  })
+  socket.on('boomPlayUpdata', (msg) => {
+    socket.broadcast.emit('Updata', reloadMap(boomMap, msg))
+  })
+
+  socket.on('putBoom', (msg) => {
+    socket.broadcast.emit('putBoom', msg)
+  })
+
+  socket.on('userDie', (msg) => {
+    socket.broadcast.emit('userDie', msg)
   })
 })
