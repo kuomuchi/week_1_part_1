@@ -1,4 +1,4 @@
-const socket = io('http://woyaozousini.site')
+const socket = io('https://woyaozousini.site')
 
 // 新增玩家ID
 window.localStorage.removeItem('boom')
