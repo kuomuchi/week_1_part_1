@@ -815,32 +815,32 @@ app.post('/admin/test.html', awsUpload.array('main', 3), (req, res) => {
 //   db.end()
 // })
 
-// app.get('/api/1.0/order/payments', (req, res) => {
-//   const sql = 'SELECT * FROM test'
-//   let transResult = ''
-//   db.query(sql, (err, results) => {
-//     if (err) throw err
+app.get('/api/1.0/order/payments', (req, res) => {
+  const sql = 'SELECT * FROM testdata'
+  let transResult = ''
+  db.query(sql, (err, results) => {
+    if (err) throw err
 
-//     const userData = {
-//       data: [
-//         { user_id: 0, total_payment: 0 },
-//         { user_id: 0, total_payment: 0 },
-//         { user_id: 0, total_payment: 0 },
-//         { user_id: 0, total_payment: 0 },
-//         { user_id: 0, total_payment: 0 }
-//       ]
-//     }
+    const userData = {
+      data: [
+        { user_id: 0, total_payment: 0 },
+        { user_id: 0, total_payment: 0 },
+        { user_id: 0, total_payment: 0 },
+        { user_id: 0, total_payment: 0 },
+        { user_id: 0, total_payment: 0 }
+      ]
+    }
 
-//     transResult = JSON.parse(JSON.stringify(results))
-//     console.log(transResult.length)
-//     for (let i = 0; i < transResult.length; i++) {
-//       const nowId = +transResult[i].user_id
-//       userData.data[nowId - 1].user_id = +transResult[i].user_id
-//       userData.data[nowId - 1].total_payment += +transResult[nowId].total
-//     }
-//     res.send(userData)
-//   })
-// })
+    transResult = JSON.parse(JSON.stringify(results))
+    console.log(transResult.length)
+    for (let i = 0; i < transResult.length; i++) {
+      const nowId = +transResult[i].user_id
+      userData.data[nowId - 1].user_id = +transResult[i].user_id
+      userData.data[nowId - 1].total_payment += +transResult[nowId].total
+    }
+    res.send(userData)
+  })
+})
 
 // console.log(b.length);
 // res.json(b.length);
