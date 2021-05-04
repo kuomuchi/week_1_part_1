@@ -824,31 +824,49 @@ app.get('/nicejob', (req, res) => {
   res.send('nice :D')
 })
 
-app.get('/api/1.0/order/payments', (req, res) => {
+app.get('/api/1.0/order/payments', async (req, res) => {
   const sql = 'SELECT user_id, total FROM testdata'
-  let transResult = ''
-  db.query(sql, (err, results) => {
-    if (err) throw err
+  const transResult = ''
+  const userData = {
+    data: [
+      { user_id: 1, total_payment: 0 },
+      { user_id: 2, total_payment: 0 },
+      { user_id: 3, total_payment: 0 },
+      { user_id: 4, total_payment: 0 },
+      { user_id: 5, total_payment: 0 }
+    ]
+  }
+  const getData = await calculationData(sql)
 
-    const userData = {
-      data: [
-        { user_id: 0, total_payment: 0 },
-        { user_id: 0, total_payment: 0 },
-        { user_id: 0, total_payment: 0 },
-        { user_id: 0, total_payment: 0 },
-        { user_id: 0, total_payment: 0 }
-      ]
-    }
+  // 單執行
+  // for (let i = 0; i < getData.length; i++) {
+  //   const nowId = +getData[i].user_id
+  //   userData.data[nowId - 1].user_id = +getData[i].user_id
+  //   userData.data[nowId - 1].total_payment += +getData[nowId].total
+  // }
+  const mid = getData.length / 2
 
-    transResult = JSON.parse(JSON.stringify(results))
-    for (let i = 0; i < transResult.length; i++) {
-      const nowId = +transResult[i].user_id
-      userData.data[nowId - 1].user_id = +transResult[i].user_id
-      userData.data[nowId - 1].total_payment += +transResult[nowId].total
-    }
-    res.send(userData)
-  })
+  for (let i = 0; i < mid; i++) {
+    // 單邊
+    const nowId = +getData[i].user_id
+    userData.data[nowId - 1].total_payment += +getData[nowId].total
+
+    // 雙邊
+    const now2Id = +getData[mid + i].user_id
+    userData.data[now2Id - 1].total_payment += +getData[now2Id].total
+  }
+
+  res.send(userData)
 })
+
+function calculationData (sql) {
+  return new Promise((resolve, reject) => {
+    db.query(sql, (err, results) => {
+      if (err) throw err
+      resolve(JSON.parse(JSON.stringify(results)))
+    })
+  })
+}
 
 // console.log(b.length);
 // res.json(b.length);
