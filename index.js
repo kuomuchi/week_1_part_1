@@ -96,13 +96,13 @@ app.get('/', limiter, (req, res) => {
 })
 
 // connect db
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PWD,
   database: process.env.DB_database,
   waitForConnections: true,
-  connectionLimit: 10
+  connectionLimit: 100
 })
 
 app.get('/selectusers', (req, res) => {
@@ -832,7 +832,6 @@ app.get('/api/1.0/order/payments', (req, res) => {
     }
 
     transResult = JSON.parse(JSON.stringify(results))
-    console.log(transResult.length)
     for (let i = 0; i < transResult.length; i++) {
       const nowId = +transResult[i].user_id
       userData.data[nowId - 1].user_id = +transResult[i].user_id
