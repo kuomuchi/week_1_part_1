@@ -1,5 +1,5 @@
 config:
-  target: "https://woyaozousini.site/"
+  target: "http://appwork-1457654402.us-east-2.elb.amazonaws.com/"
   http:
     pool: 20
   phases:

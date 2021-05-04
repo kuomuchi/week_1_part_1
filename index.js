@@ -816,7 +816,7 @@ app.post('/admin/test.html', awsUpload.array('main', 3), (req, res) => {
 // })
 
 app.get('/api/1.0/order/payments', (req, res) => {
-  const sql = 'SELECT * FROM testdata'
+  const sql = 'SELECT user_id, total FROM testdata'
   let transResult = ''
   db.query(sql, (err, results) => {
     if (err) throw err
