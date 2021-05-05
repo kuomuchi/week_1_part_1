@@ -820,7 +820,7 @@ function resetTestData (num) {
 }
 
 app.get('/nicejob', (req, res) => {
-  resetTestData(5000)
+  resetTestData(10000)
   res.send('nice :D')
 })
 
@@ -845,13 +845,13 @@ app.get('/api/1.0/order/payments', async (req, res) => {
   // userData.data[3].total_payment = getData[0].userId4
   // userData.data[4].total_payment = getData[0].userId5
 
-  getThing(getData).then(res.send.bind(res))
-  // for (let i = 0; i < getData.length; i++) {
-  //   const nowId = +getData[i].user_id
-  //   userData.data[nowId - 1].total_payment += +getData[nowId].total
-  // }
+  // getThing(getData).then(res.send.bind(res))
+  for (let i = 0; i < getData.length; i++) {
+    const nowId = +getData[i].user_id
+    userData.data[nowId - 1].total_payment += +getData[nowId].total
+  }
 
-  // res.send(userData)
+  res.send(userData)
 })
 
 // 單執行

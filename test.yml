@@ -1,10 +1,10 @@
 config:
-  target: "http://woyaozousini.site"
+  target: "http://stylish-1444069007.ap-southeast-1.elb.amazonaws.com"
   http:
     pool: 20
   phases:
-    - duration: 20
-      arrivalRate: 40
+    - duration: 10
+      arrivalRate: 2
 scenarios:
   - flow:
     - get:
