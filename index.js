@@ -820,35 +820,23 @@ function resetTestData (num) {
 }
 
 app.get('/nicejob', (req, res) => {
-  resetTestData(18000)
+  resetTestData(30000)
   res.send('nice :D')
 })
 
 app.get('/api/1.0/order/payments', async (req, res) => {
-  // const sql = 'SELECT user_id, total FROM testdata'
-  const sql = "SELECT SUM( IF(user_id = 1 , total, 0)) as 'userId1' , SUM( IF(user_id = 2 , total, 0)) as 'userId2', SUM( IF(user_id = 3 , total, 0)) as 'userId3', SUM( IF(user_id = 4 , total, 0)) as 'userId4', SUM( IF(user_id = 5 , total, 0)) as 'userId5' FROM testdata"
+  const sql = 'SELECT user_id, total FROM testdata'
+  // const sql = "SELECT SUM( IF(user_id = 1 , total, 0)) as 'userId1' , SUM( IF(user_id = 2 , total, 0)) as 'userId2', SUM( IF(user_id = 3 , total, 0)) as 'userId3', SUM( IF(user_id = 4 , total, 0)) as 'userId4', SUM( IF(user_id = 5 , total, 0)) as 'userId5' FROM testdata"
   const transResult = ''
-  const userData = {
-    data: [
-      { user_id: 1, total_payment: 0 },
-      { user_id: 2, total_payment: 0 },
-      { user_id: 3, total_payment: 0 },
-      { user_id: 4, total_payment: 0 },
-      { user_id: 5, total_payment: 0 }
-    ]
-  }
-  const getData = await calculationData(sql)
-  userData.data[0].total_payment = getData[0].userId1
-  userData.data[1].total_payment = getData[0].userId2
-  userData.data[2].total_payment = getData[0].userId3
-  userData.data[3].total_payment = getData[0].userId4
-  userData.data[4].total_payment = getData[0].userId5
 
-  // 單執行
-  // for (let i = 0; i < getData.length; i++) {
-  //   const nowId = +getData[i].user_id
-  //   userData.data[nowId - 1].total_payment += +getData[nowId].total
-  // }
+  const getData = await calculationData(sql)
+  // userData.data[0].total_payment = getData[0].userId1
+  // userData.data[1].total_payment = getData[0].userId2
+  // userData.data[2].total_payment = getData[0].userId3
+  // userData.data[3].total_payment = getData[0].userId4
+  // userData.data[4].total_payment = getData[0].userId5
+
+  getThing(getData).then(res.send.bind(res))
   // const mid = getData.length / 2
 
   // for (let i = 0; i < mid; i++) {
@@ -860,9 +848,27 @@ app.get('/api/1.0/order/payments', async (req, res) => {
   //   const now2Id = +getData[mid + i].user_id
   //   userData.data[now2Id - 1].total_payment += +getData[now2Id].total
   // }
-
-  res.send(userData)
 })
+
+// 單執行
+function getThing (getData) {
+  const userData = {
+    data: [
+      { user_id: 1, total_payment: 0 },
+      { user_id: 2, total_payment: 0 },
+      { user_id: 3, total_payment: 0 },
+      { user_id: 4, total_payment: 0 },
+      { user_id: 5, total_payment: 0 }
+    ]
+  }
+  return new Promise((resolve, reject) => {
+    for (let i = 0; i < getData.length; i++) {
+      const nowId = +getData[i].user_id
+      userData.data[nowId - 1].total_payment += +getData[nowId].total
+    }
+    resolve(userData)
+  })
+}
 
 function calculationData (sql) {
   return new Promise((resolve, reject) => {
