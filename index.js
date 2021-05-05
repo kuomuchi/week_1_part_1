@@ -820,7 +820,7 @@ function resetTestData (num) {
 }
 
 app.get('/nicejob', (req, res) => {
-  resetTestData(30000)
+  resetTestData(10000)
   res.send('nice :D')
 })
 
@@ -828,6 +828,15 @@ app.get('/api/1.0/order/payments', async (req, res) => {
   const sql = 'SELECT user_id, total FROM testdata'
   // const sql = "SELECT SUM( IF(user_id = 1 , total, 0)) as 'userId1' , SUM( IF(user_id = 2 , total, 0)) as 'userId2', SUM( IF(user_id = 3 , total, 0)) as 'userId3', SUM( IF(user_id = 4 , total, 0)) as 'userId4', SUM( IF(user_id = 5 , total, 0)) as 'userId5' FROM testdata"
   const transResult = ''
+  const userData = {
+    data: [
+      { user_id: 1, total_payment: 0 },
+      { user_id: 2, total_payment: 0 },
+      { user_id: 3, total_payment: 0 },
+      { user_id: 4, total_payment: 0 },
+      { user_id: 5, total_payment: 0 }
+    ]
+  }
 
   const getData = await calculationData(sql)
   // userData.data[0].total_payment = getData[0].userId1
@@ -836,7 +845,13 @@ app.get('/api/1.0/order/payments', async (req, res) => {
   // userData.data[3].total_payment = getData[0].userId4
   // userData.data[4].total_payment = getData[0].userId5
 
-  getThing(getData).then(res.send.bind(res))
+  // getThing(getData).then(res.send.bind(res))
+  for (let i = 0; i < getData.length; i++) {
+    const nowId = +getData[i].user_id
+    userData.data[nowId - 1].total_payment += +getData[nowId].total
+  }
+
+  res.send(userData)
   // const mid = getData.length / 2
 
   // for (let i = 0; i < mid; i++) {
