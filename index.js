@@ -102,7 +102,7 @@ const db = mysql.createPool({
   password: process.env.DB_PWD,
   database: process.env.DB_database,
   // waitForConnections: true,
-  connectionLimit: 800
+  connectionLimit: 10
 })
 
 app.get('/selectusers', (req, res) => {
@@ -820,7 +820,7 @@ function resetTestData (num) {
 }
 
 app.get('/nicejob', (req, res) => {
-  resetTestData(10000)
+  resetTestData(18000)
   res.send('nice :D')
 })
 
