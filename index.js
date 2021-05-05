@@ -101,7 +101,7 @@ const db = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PWD,
   database: process.env.DB_database,
-  waitForConnections: true,
+  // waitForConnections: true,
   connectionLimit: 100
 })
 
@@ -820,7 +820,7 @@ function resetTestData (num) {
 }
 
 app.get('/nicejob', (req, res) => {
-  resetTestData(10000)
+  resetTestData(15000)
   res.send('nice :D')
 })
 
