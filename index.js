@@ -825,7 +825,8 @@ app.get('/nicejob', (req, res) => {
 })
 
 app.get('/api/1.0/order/payments', async (req, res) => {
-  const sql = 'SELECT user_id, total FROM testdata'
+  // const sql = 'SELECT user_id, total FROM testdata'
+  const sql = "SELECT SUM( IF(user_id = 1 , total, 0)) as 'userId1' , SUM( IF(user_id = 2 , total, 0)) as 'userId2', SUM( IF(user_id = 3 , total, 0)) as 'userId3', SUM( IF(user_id = 4 , total, 0)) as 'userId4', SUM( IF(user_id = 5 , total, 0)) as 'userId5' FROM testdata"
   const transResult = ''
   const userData = {
     data: [
@@ -837,24 +838,28 @@ app.get('/api/1.0/order/payments', async (req, res) => {
     ]
   }
   const getData = await calculationData(sql)
+  userData.data[0].total_payment = getData[0].userId1
+  userData.data[1].total_payment = getData[0].userId2
+  userData.data[2].total_payment = getData[0].userId3
+  userData.data[3].total_payment = getData[0].userId4
+  userData.data[4].total_payment = getData[0].userId5
 
   // 單執行
   // for (let i = 0; i < getData.length; i++) {
   //   const nowId = +getData[i].user_id
-  //   userData.data[nowId - 1].user_id = +getData[i].user_id
   //   userData.data[nowId - 1].total_payment += +getData[nowId].total
   // }
-  const mid = getData.length / 2
+  // const mid = getData.length / 2
 
-  for (let i = 0; i < mid; i++) {
-    // 單邊
-    const nowId = +getData[i].user_id
-    userData.data[nowId - 1].total_payment += +getData[nowId].total
+  // for (let i = 0; i < mid; i++) {
+  //   // 單邊
+  //   const nowId = +getData[i].user_id
+  //   userData.data[nowId - 1].total_payment += +getData[nowId].total
 
-    // 雙邊
-    const now2Id = +getData[mid + i].user_id
-    userData.data[now2Id - 1].total_payment += +getData[now2Id].total
-  }
+  //   // 雙邊
+  //   const now2Id = +getData[mid + i].user_id
+  //   userData.data[now2Id - 1].total_payment += +getData[now2Id].total
+  // }
 
   res.send(userData)
 })
