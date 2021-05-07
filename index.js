@@ -208,14 +208,14 @@ app.post('/order/checkout', async (req, res) => {
       // transResult = JSON.parse(JSON.stringify(results));
       const printf = { data: { number: results.id } }
       // 把資料wee 出去:D
-      gatNormoData(results.id)
+      gatNormoDatadsfasdfa(results.id)
 
       res.json(printf)
     })
   })
 })
 
-async function gatNormoData (id) {
+async function gatNormoDatadsfasdfa (id) {
   const sql3 = `SELECT list FROM week_2_part_2 WHERE id = ${id}`
   const week2Data = await calculationData(sql3)
 
