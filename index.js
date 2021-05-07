@@ -206,9 +206,10 @@ app.post('/order/checkout', async (req, res) => {
       if (err) throw err
 
       // transResult = JSON.parse(JSON.stringify(results));
-      const printf = { data: { number: results.id } }
-      // 把資料wee 出去:D
       gatNormoDatadsfasdfa(results.id)
+      const printf = { data: { number: results.id } }
+
+      // 把資料wee 出去:D
 
       res.json(printf)
     })
@@ -216,9 +217,10 @@ app.post('/order/checkout', async (req, res) => {
 })
 
 async function gatNormoDatadsfasdfa (id) {
+  console.log('有近來:D')
+  console.log(id)
   const sql3 = `SELECT list FROM week_2_part_2 WHERE id = ${id}`
   const week2Data = await calculationData(sql3)
-
   const update = []
   const singoData = []
   for (let i = 0; i < week2Data.length; i++) {
