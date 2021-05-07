@@ -202,16 +202,15 @@ app.post('/order/checkout', async (req, res) => {
 
     const sq = 'SELECT * FROM week_2_part_2'
     // let transResult = "";
-    db.query(sq, (err, results) => {
+    db.query(sq, async (err, results) => {
       if (err) throw err
 
-      console.log('再次確認')
-      gatNormoDatadsfasdfa(results.id)
       // transResult = JSON.parse(JSON.stringify(results));
       const printf = { data: { number: results.id } }
 
       // 把資料wee 出去:D
 
+      console.log(printf)
       res.json(printf)
     })
   })
@@ -760,9 +759,12 @@ app.post('/cart.html', (req, res) => {
       db.query(sq, (err, results) => {
         if (err) throw err
 
+        console.log('再次確認')
+
         const transResult = JSON.parse(JSON.stringify(results))
         const dealData = transResult.length
         const printf = { data: transResult[dealData - 1].id }
+        gatNormoDatadsfasdfa(transResult[dealData - 1].id)
         res.json(printf)
       })
     }
