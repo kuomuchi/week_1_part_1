@@ -205,8 +205,9 @@ app.post('/order/checkout', async (req, res) => {
     db.query(sq, (err, results) => {
       if (err) throw err
 
-      // transResult = JSON.parse(JSON.stringify(results));
+      console.log('再次確認')
       gatNormoDatadsfasdfa(results.id)
+      // transResult = JSON.parse(JSON.stringify(results));
       const printf = { data: { number: results.id } }
 
       // 把資料wee 出去:D
