@@ -14,6 +14,7 @@ const aws = require('aws-sdk')
 const uuid = require('uuid').v4 // 處理image的東東
 const multer = require('multer') // 獲取圖片的部分
 const path = require('path') //  整理檔案，指定檔案
+const fetch = require('node-fetch') //  抓取API資料的工具
 const multerS3 = require('multer-s3') // multer在aws 上使用S3
 aws.config.update({ // 設置基本資料
   accessKeyId: process.env.AWS_image_id,
@@ -79,6 +80,13 @@ TapPay.initialize({
   env: 'sandbox'
 })
 
+const socketio = require('socket.io')
+
+const http = require('http')
+
+const server = http.createServer(app)
+const io = socketio(server, { cors: { origin: '*' } })
+
 // You just need to initilize the config once.
 
 app.use(express.json())
@@ -120,8 +128,8 @@ app.get('/selectusers', (req, res) => {
 })
 
 // 這是聆聽3000喔
-app.listen(3000, () => {
-  console.log('run on 3000')
+server.listen(3000, () => {
+  console.log('start math game')
 })
 
 // week_2_part_1
@@ -939,3 +947,81 @@ function calculationData (sql) {
 // });
 
 /// ////////////////// 考試的部分:D
+
+// 用來抓取Aathur data 的 API
+app.get('/api/1.0/order/data', async (req, res) => {
+  const getData = await fetch('http://13.113.12.180:1234/api/1.0/order/data').then(res => res.text())
+  console.log(typeof (getData))
+
+  const sortData = JSON.parse(getData)
+  console.log(typeof (sortData))
+  console.log(sortData.length)
+  await resetArthurData(sortData)
+  res.send(sortData)
+})
+
+app.get('/api/1.0/order/getdata', async (req, res) => {
+  const printf = { data: [] }
+  let sql = 'SELECT SUM(total) as total FROM athur_table;'
+  const total = await calculationData(sql)
+  printf.data.push(total[0])
+  sql = 'SELECT code, COUNT(code) as codeNum, name  FROM arthur_list GROUP BY code;'
+  const color = await calculationData(sql)
+  printf.data.push(color)
+
+  sql = 'SELECT price, SUM(qty) FROM arthur_list  GROUP BY price ORDER BY price ASC;'
+  const priceQty = await calculationData(sql)
+  printf.data.push(priceQty)
+
+  sql = 'SELECT id, COUNT(id) as total_porduct, COUNT(IF(size = "S", size, null)) as S, COUNT(IF(size = "M", size, null)) as M, COUNT(IF(size = "L", size, null)) as L FROM arthur_list GROUP BY id  ORDER BY total_porduct DESC LIMIT 5'
+  const pkProduct = await calculationData(sql)
+  printf.data.push(pkProduct)
+
+  res.send(printf)
+})
+
+app.get('/data', async (req, res) => {
+  res.sendFile(path.join(__dirname, '/public/arthur.html'))
+})
+
+function resetArthurData (atthurData) {
+  const num = atthurData.length
+  db.query('TRUNCATE TABLE athur_table')
+  db.query('TRUNCATE TABLE arthur_list')
+  const request = []
+  const listTable = []
+  let total
+  let list
+  for (let i = 0; i < num; i++) {
+    total = atthurData[i].total
+    list = JSON.stringify(atthurData[i].list)
+
+    const listIn = atthurData[i].list
+
+    const listLeng = listIn.length
+    // 先把list 加到裡另外一個table裡面
+    for (let u = 0; u < listLeng; u++) {
+      const nice = [listIn[u].id, listIn[u].price, listIn[u].color.code, listIn[u].color.name, listIn[u].size, listIn[u].qty]
+      listTable.push(nice)
+    }
+
+    const great = [total, `${list}`]
+    request.push(great)
+  }
+  console.log('填裝完畢:D')
+  const sql = 'INSERT INTO stylish.athur_table (total, list) VALUES ?'
+  db.query(sql, [request], (err, result) => {
+    if (err) throw err
+  })
+
+  const sql2 = 'INSERT INTO stylish.arthur_list (id, price, code, name, size, qty) VALUES ?'
+  db.query(sql2, [listTable], (err, result) => {
+    if (err) throw err
+  })
+
+  return request
+}
+
+io.on('connection', (socket) => {
+  console.log('a user connected')
+})
