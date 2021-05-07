@@ -192,8 +192,9 @@ app.post('/order/checkout', async (req, res) => {
       userData[3] = true
     }
 
-    console.log(userData[1])
-    console.log(userData[2])
+    console.log('asdfasdfasdfasdfasdfasdfasdfasdf')
+    console.log(req.body.list)
+    console.log('asdfasdfasdfasdfasdfasdfasdfasdf')
 
     const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
     const sql = 'INSERT INTO week_2_part_2 SET ?'
