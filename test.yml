@@ -1,10 +1,10 @@
 config:
-  target: "http://stylish-1444069007.ap-southeast-1.elb.amazonaws.com"
+  target: "http://appwork-1457654402.us-east-2.elb.amazonaws.com"
   http:
     pool: 20
   phases:
     - duration: 1000
-      arrivalRate: 5
+      arrivalRate: 20
 scenarios:
   - flow:
     - get:

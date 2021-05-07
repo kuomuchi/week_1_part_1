@@ -37,11 +37,10 @@
         if(xhr.readyState == 4 && xhr.status == 200){
           var str = "";
           str = xhr.responseText;
-          console.log(str);
-          str = JSON.parse(str);
+          console.log(str.data)
           window.localStorage.setItem('access_token', str['data']['access_token']);
           alert('登入成功:D')
-          window.location.href = 'http://woyaozousini.site/'
+          // window.location.href = 'http://woyaozousini.site/'
         }
       }
       xhr.send(userData);

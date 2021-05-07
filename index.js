@@ -634,8 +634,9 @@ app.get('/api/1.0/user/profile', (req, res) => {
 })
 
 app.post('/api/1.0/user/profile', (req, res) => {
-  console.log(req.headers)
+  // console.log(req.headers)
   console.log(req.body.token)
+  console.log(req.body)
 
   const gettoken = req.body.token
 
@@ -936,3 +937,5 @@ function calculationData (sql) {
 
 // app.get("/token", (req, res) => {
 // });
+
+/// ////////////////// 考試的部分:D
