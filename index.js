@@ -129,7 +129,7 @@ app.get('/selectusers', (req, res) => {
 
 // 這是聆聽3000喔
 server.listen(3000, () => {
-  console.log('start math game')
+  console.log('run on port 3000')
 })
 
 // week_2_part_1
@@ -192,10 +192,6 @@ app.post('/order/checkout', async (req, res) => {
       userData[3] = true
     }
 
-    console.log('asdfasdfasdfasdfasdfasdfasdfasdf')
-    console.log(req.body.list)
-    console.log('asdfasdfasdfasdfasdfasdfasdfasdf')
-
     const post = { prime: userData[0], oder: `${JSON.stringify(userData[1])}`, list: `${JSON.stringify(userData[1])}`, pay: `${userData[3]}` }
     const sql = 'INSERT INTO week_2_part_2 SET ?'
     db.query(sql, post, (err, result) => {
@@ -211,11 +207,42 @@ app.post('/order/checkout', async (req, res) => {
 
       // transResult = JSON.parse(JSON.stringify(results));
       const printf = { data: { number: results.id } }
+      // 把資料wee 出去:D
+      gatNormoData(results.id)
 
       res.json(printf)
     })
   })
 })
+
+async function gatNormoData (id) {
+  const sql3 = `SELECT list FROM week_2_part_2 WHERE id = ${id}`
+  const week2Data = await calculationData(sql3)
+
+  const update = []
+  const singoData = []
+  for (let i = 0; i < week2Data.length; i++) {
+    const sorData = JSON.parse(week2Data[i].list)
+    let total = 0
+    for (let u = 0; u < sorData.length; u++) {
+      total += sorData[u].price
+      const nice = [sorData[u].id, sorData[u].price, sorData[u].color, sorData[u].color, sorData[u].size, Math.floor(Math.random() * 7) + 1]
+      singoData.push(nice)
+    }
+    const greate = [total, JSON.stringify(sorData)]
+    update.push(greate)
+  }
+
+  const sql = 'INSERT INTO stylish.athur_table (total, list) VALUES ?'
+  db.query(sql, [update], (err, result) => {
+    if (err) throw err
+  })
+
+  const sql2 = 'INSERT INTO stylish.arthur_list (id, price, code, name, size, qty) VALUES ?'
+  db.query(sql2, [singoData], (err, result) => {
+    if (err) throw err
+  })
+}
 
 // week_1_part_5
 
@@ -961,6 +988,9 @@ app.get('/api/1.0/order/data', async (req, res) => {
   console.log(typeof (sortData))
   console.log(sortData.length)
   await resetArthurData(sortData)
+
+  // 抓取過去的資料
+  await getNormoData()
   res.send(sortData)
 })
 
@@ -988,7 +1018,36 @@ app.get('/data', async (req, res) => {
   res.sendFile(path.join(__dirname, '/public/arthur.html'))
 })
 
-function resetArthurData (atthurData) {
+async function getNormoData () {
+  const sql3 = 'SELECT list FROM week_2_part_2'
+  const week2Data = await calculationData(sql3)
+
+  const update = []
+  const singoData = []
+  for (let i = 0; i < week2Data.length; i++) {
+    const sorData = JSON.parse(week2Data[i].list)
+    let total = 0
+    for (let u = 0; u < sorData.length; u++) {
+      total += sorData[u].price
+      const nice = [sorData[u].id, sorData[u].price, sorData[u].color, sorData[u].color, sorData[u].size, Math.floor(Math.random() * 7) + 1]
+      singoData.push(nice)
+    }
+    const greate = [total, JSON.stringify(sorData)]
+    update.push(greate)
+  }
+
+  const sql = 'INSERT INTO stylish.athur_table (total, list) VALUES ?'
+  db.query(sql, [update], (err, result) => {
+    if (err) throw err
+  })
+
+  const sql2 = 'INSERT INTO stylish.arthur_list (id, price, code, name, size, qty) VALUES ?'
+  db.query(sql2, [singoData], (err, result) => {
+    if (err) throw err
+  })
+}
+
+async function resetArthurData (atthurData) {
   const num = atthurData.length
   db.query('TRUNCATE TABLE athur_table')
   db.query('TRUNCATE TABLE arthur_list')
