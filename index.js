@@ -1019,7 +1019,7 @@ app.get('/api/1.0/order/getdata', async (req, res) => {
   res.send(printf)
 })
 
-app.get('/data', async (req, res) => {
+app.get('/admin/dashboard.html', async (req, res) => {
   res.sendFile(path.join(__dirname, '/public/arthur.html'))
 })
 
