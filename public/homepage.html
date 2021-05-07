@@ -39,7 +39,9 @@
           str = xhr.responseText;
           console.log(typeof(str))
           console.log(str)
-          console.log(str.data)
+          str = JSON.parse(str)
+          const log = str.data.access_token
+          console.log(log)
           window.localStorage.setItem('access_token', str['data']['access_token']);
           alert('登入成功:D')
           // window.location.href = 'http://woyaozousini.site/'
